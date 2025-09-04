@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="conveyor_box_system">
+  <include file="panda.xml" />
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <asset>
+    <material name="box_material" rgba="0.8 0.6 0.4 1" />
+    <material name="conveyor_material" rgba="0.2 0.2 0.2 1" />
+    <material name="conveyor_belt_material" rgba="0.1 0.1 0.1 1" />
+    <material name="roller_material" rgba="0.4 0.4 0.4 1" />
+    <material name="support_material" rgba="0.6 0.6 0.6 1" />
+    <material name="object_material" rgba="0.2 0.8 0.2 1" />
+    <material name="ground_material" rgba="0.9 0.9 0.9 1" />
+    <material name="wall_material" rgba="0.7 0.7 0.8 1" />
+    <texture name="conveyor_texture" type="2d" builtin="checker" rgb1="0.05 0.05 0.05" rgb2="0.15 0.15 0.15" width="512" height="512" />
+    <material name="conveyor_tex_material" texture="conveyor_texture" texrepeat="20 4" rgba="0.1 0.1 0.1 1" />
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="300" height="300" />
+    <material name="grid_material" texture="grid" texrepeat="8 8" rgba="0.8 0.8 0.8 1" />
+  </asset>
+  <worldbody>
+    <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
+    <body name="collection_box" pos="2.0 0.0 0.1">
+      <geom name="box_bottom" type="box" size="1.5 1.5 0.05" material="box_material" />
+      <geom name="box_wall1" type="box" size="1.5 0.05 0.8" pos="0 1.45 0.45" material="wall_material" />
+      <geom name="box_wall2" type="box" size="1.5 0.05 0.8" pos="0 -1.45 0.45" material="wall_material" />
+      <geom name="box_wall3" type="box" size="0.05 1.4 0.8" pos="1.45 0 0.45" material="wall_material" />
+      <geom name="box_wall4" type="box" size="0.05 1.4 0.8" pos="-1.45 0 0.45" material="wall_material" />
+    </body>
+    <body name="conveyor_system" pos="-2 0 0.1">
+      <geom name="conveyor_support_1" type="box" size="0.05 1.0 0.3" pos="-1.3333333333333333 0 -0.15" material="support_material" />
+      <geom name="conveyor_support_2" type="box" size="0.05 1.0 0.3" pos="0 0 -0.15" material="support_material" />
+      <geom name="conveyor_support_3" type="box" size="0.05 1.0 0.3" pos="1.3333333333333333 0 -0.15" material="support_material" />
+      <geom name="conveyor_base" type="box" size="4.0 1.0 0.05" pos="0 0 -0.025" material="conveyor_material" />
+      <body name="belt_surface" pos="0 0 0.05">
+        <geom name="belt_surface_geom" type="box" size="4.0 1.0 0.025" material="conveyor_tex_material" friction="0.8 0.005 0.0001" />
+        <joint name="belt_joint" type="slide" axis="1 0 0" limited="false" damping="0.1" />
+      </body>
+      <body name="roller_1" pos="-2.15 0 0.05">
+        <geom name="roller_1_geom" type="cylinder" size="0.15 0.5" material="roller_material" />
+        <joint name="roller_1_joint" type="hinge" axis="0 1 0" limited="false" damping="0.01" />
+      </body>
+      <body name="roller_2" pos="2.15 0 0.05">
+        <geom name="roller_2_geom" type="cylinder" size="0.15 0.5" material="roller_material" />
+        <joint name="roller_2_joint" type="hinge" axis="0 1 0" limited="false" damping="0.01" />
+      </body>
+    </body>
+    <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
+    <light name="side_light" pos="6.0 6.0 6.0" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
+    <light name="conveyor_light" pos="-2 0 6.0" dir="0 0 -1" diffuse="0.3 0.3 0.3" />
+  </worldbody>
+  <actuator>
+    <motor name="belt_motor" joint="belt_joint" gear="100" ctrllimited="true" ctrlrange="-10 10" />
+    <motor name="roller_1_motor" joint="roller_1_joint" gear="20" ctrllimited="true" ctrlrange="-50 50" />
+    <motor name="roller_2_motor" joint="roller_2_joint" gear="20" ctrllimited="true" ctrlrange="-50 50" />
+  </actuator>
+  <sensor>
+    <jointpos name="belt_pos" joint="belt_joint" />
+    <jointvel name="belt_vel" joint="belt_joint" />
+    <jointpos name="roller_1_pos" joint="roller_1_joint" />
+    <jointvel name="roller_1_vel" joint="roller_1_joint" />
+    <jointpos name="roller_2_pos" joint="roller_2_joint" />
+    <jointvel name="roller_2_vel" joint="roller_2_joint" />
+  </sensor>
+</mujoco>

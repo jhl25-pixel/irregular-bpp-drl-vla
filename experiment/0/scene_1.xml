@@ -1,0 +1,25 @@
+<mujoco model="conveyor_box_system">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <asset>
+    <material name="box_material" rgba="0.8 0.6 0.4 1" />
+    <material name="conveyor_material" rgba="0.3 0.3 0.3 1" />
+    <material name="object_material" rgba="0.2 0.8 0.2 1" />
+    <material name="ground_material" rgba="0.9 0.9 0.9 1" />
+    <material name="wall_material" rgba="0.7 0.7 0.8 1" />
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="300" height="300" />
+    <material name="grid_material" texture="grid" texrepeat="8 8" rgba="0.8 0.8 0.8 1" />
+  <mesh name="obj_0" file="g:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl" scale="0.01 0.01 0.01" /><mesh name="obj_1" file="g:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl" scale="0.01 0.01 0.01" /></asset>
+  <worldbody>
+    <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
+    <body name="collection_box" pos="0 0 0.1">
+      <geom name="box_bottom" type="box" size="1.5 1.5 0.05" material="box_material" />
+      <geom name="box_wall1" type="box" size="1.5 0.05 0.8" pos="0 1.45 0.25" material="wall_material" />
+      <geom name="box_wall2" type="box" size="1.5 0.05 0.8" pos="0 -1.45 0.25" material="wall_material" />
+      <geom name="box_wall3" type="box" size="0.05 1.4 0.8" pos="1.45 0 0.25" material="wall_material" />
+      <geom name="box_wall4" type="box" size="0.05 1.4 0.8" pos="-1.45 0 0.25" material="wall_material" />
+    </body>
+    <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
+    <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
+  <body name="obj_0" pos="-1.2077487792249721 0.9540854442064345 -0.007423317853972387" quat="0.999985359008172 -0.001969879351761106 -0.0035063379304767833 -0.0036203506672783537"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="0 0 0" quat="1 0 0 0"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
+</mujoco>

@@ -1,0 +1,25 @@
+<mujoco model="conveyor_box_system">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <asset>
+    <material name="box_material" rgba="0.8 0.6 0.4 1" />
+    <material name="conveyor_material" rgba="0.3 0.3 0.3 1" />
+    <material name="object_material" rgba="0.2 0.8 0.2 1" />
+    <material name="ground_material" rgba="0.9 0.9 0.9 1" />
+    <material name="wall_material" rgba="0.7 0.7 0.8 1" />
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="300" height="300" />
+    <material name="grid_material" texture="grid" texrepeat="8 8" rgba="0.8 0.8 0.8 1" />
+  <mesh name="obj_0" file="g:\irregularBPP\dataset\objaversestl\check_rest.stl" scale="0.01 0.01 0.01" /><mesh name="obj_1" file="g:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount.stl" scale="0.01 0.01 0.01" /><mesh name="obj_2" file="g:\irregularBPP\dataset\objaversestl\nametag_20191103-68-bhpt8a.stl" scale="0.01 0.01 0.01" /><mesh name="obj_3" file="g:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount.stl" scale="0.01 0.01 0.01" /><mesh name="obj_4" file="g:\irregularBPP\dataset\objaversestl\ShroomEyeRemix.stl" scale="0.01 0.01 0.01" /><mesh name="obj_5" file="g:\irregularBPP\dataset\objaversestl\licenceplate_20221103-47-161k5q3.stl" scale="0.01 0.01 0.01" /></asset>
+  <worldbody>
+    <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
+    <body name="collection_box" pos="0 0 0.1">
+      <geom name="box_bottom" type="box" size="1.5 1.5 0.05" material="box_material" />
+      <geom name="box_wall1" type="box" size="1.5 0.05 0.8" pos="0 1.45 0.25" material="wall_material" />
+      <geom name="box_wall2" type="box" size="1.5 0.05 0.8" pos="0 -1.45 0.25" material="wall_material" />
+      <geom name="box_wall3" type="box" size="0.05 1.4 0.8" pos="1.45 0 0.25" material="wall_material" />
+      <geom name="box_wall4" type="box" size="0.05 1.4 0.8" pos="-1.45 0 0.25" material="wall_material" />
+    </body>
+    <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
+    <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
+  <body name="obj_0" pos="0.9566844729239184 -1.1995953385174851 0.13204356387378205" quat="-0.0019219883046423356 0.05124559412991416 0.998526231635749 -0.017764002323196165"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="-0.4624835317041957 0.3556315998708844 0.6444518502762581" quat="0.7064220956214688 -0.7061117286465571 0.03474192763460384 -0.03416208351047168"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_2" pos="0.0023203243155149682 0.036392813263367026 0.0007157638950419488" quat="0.9921882761505991 -0.0019384633097799305 -0.0008590699327007294 0.12473142758804295"><joint name="freejoint_2" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_2" type="mesh" mesh="obj_2" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_3" pos="-0.03446386954584558 -0.6636597171615699 0.6437998189278781" quat="0.7040417716123414 -0.7036646693140104 -0.06806212690792511 0.06744452435097491"><joint name="freejoint_3" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_3" type="mesh" mesh="obj_3" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_4" pos="0.36340289827688343 -0.28911057531675044 -0.052391002580952147" quat="0.6562017559630885 -0.27952064755226574 -0.6407631241115144 -0.2840599969051868"><joint name="freejoint_4" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_4" type="mesh" mesh="obj_4" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_5" pos="0.006749224746165854 0.0018437692392010677 0.012277942269680263" quat="0.9999945416631134 -0.0002789193409702958 -0.002438539632140301 -0.0022118708016914852"><joint name="freejoint_5" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_5" type="mesh" mesh="obj_5" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
+</mujoco>
