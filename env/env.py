@@ -5,6 +5,8 @@ import numpy as np
 import datetime
 import os
 import sys
+import shutil
+import utils
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 from param import param
@@ -102,9 +104,12 @@ class MujocoPackingEnv:
         if not os.path.exists(result_path):
             os.makedirs(result_path)
         param.result_path_now = result_path
+        destination = os.path.join(param.result_path_now, 'assets')
+        if not os.path.exists(destination):
+            shutil.copytree(param.robot_assets, destination)
 
 
-    def add_object_to_scene(self, x, y, z, obj_path):
+    def add_object_to_scene(self, x, y, z, obj_path=None):
 
         if self.current_item_idx >= param.data_num:
             return
@@ -117,8 +122,11 @@ class MujocoPackingEnv:
         mesh_name = f"obj_{self.current_item_idx}"
         mesh_elem = ET.SubElement(assets, 'mesh')
         mesh_elem.set('name', mesh_name)
-        mesh_elem.set('file', self.initial_packing_object[self.current_item_idx])
-        mesh_elem.set('scale', "0.01 0.01 0.01")
+        mesh_elem.set('file', obj_path)
+
+        #scale = utils.object_specilized_scale(obj_path)
+        scale = 0.003
+        mesh_elem.set('scale', f"{scale} {scale} {scale}")
 
         worldbody = root.find('worldbody')
 
@@ -147,6 +155,7 @@ class MujocoPackingEnv:
         
         # 物理属性
         geom_elem.set('friction', '0.7 0.01 0.01')  # 摩擦
+
         
         # 保存临时XML并重新加载模型
         temp_xml = f"scene_{self.current_item_idx}.xml"
@@ -229,7 +238,7 @@ class MujocoPackingEnv:
         self.current_xml_path = os.path.join(param.result_path_now, temp_xml)
     
 
-    def step(self, initial_positions):
+    def step(self, initial_positions, packing_object=None):
         '''
         input:
         initial_positions : the initial throw position before drop simulation
@@ -237,8 +246,11 @@ class MujocoPackingEnv:
         output:
         positions : The cumulated position list, in the form of dictionary
         '''
-        self.add_object_to_scene(initial_positions[0], initial_positions[1], initial_positions[2],
-                                 self.initial_packing_object[self.current_item_idx])
+        if packing_object == None:
+            packing_object = self.initial_packing_object[self.current_item_idx]
+
+        self.add_object_to_scene(initial_positions[0], initial_positions[1], initial_positions[2], packing_object)
+
         positions = self.simulate_drop()
         print(positions)
         self.set_final_positions_in_xml(positions)
@@ -261,7 +273,15 @@ class MujocoPackingEnv:
 
 
 def build_the_env():
-    xml_file = generate_initial_xml()
+    xml_file = generate_initial_xml(
+        box_scale=0.2, 
+        box_position=(6, 2, 0.1),
+        conveyor_length=2.5,
+        conveyor_width=0.6,
+        conveyor_position=(-10, 10, 0.5),
+        object_num=25
+    )
+
     data_simulator = simulator(param.data_path, data_type="stl")
     simulated_object_list = data_simulator._roll_the_dice(param.data_num)
 
@@ -269,7 +289,7 @@ def build_the_env():
     env.init()
     return env
 
-if __name__ == "__main__":
+def test_one_step():
     total_reward = 0
     total_count = 0
     env = build_the_env()
@@ -284,6 +304,13 @@ if __name__ == "__main__":
         if done: 
             break
 
+if __name__ == "__main__":
     
-
-
+    #test_one_step()
+    env = build_the_env()
+    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
+    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl")
+    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL")
+    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
+    #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\check_rest.stl")
+    #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount_lt.stl")

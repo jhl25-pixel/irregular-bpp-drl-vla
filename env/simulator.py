@@ -27,7 +27,8 @@ class simulator:
         for item in data_path_list:
             try:
                 ascii_mesh = mesh.Mesh.from_file(item)
-                utils.convert_stl_from_ascii_to_binary(item, item)
+                if item.lower().endswith(".stl"):
+                    utils.convert_stl_from_ascii_to_binary(item, item)
             except:
                 continue
 

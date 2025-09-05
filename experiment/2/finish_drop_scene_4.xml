@@ -1,0 +1,25 @@
+<mujoco model="conveyor_box_system">
+  <include file="g:\irregularBPP\env\franka_emika_panda\panda.xml" />
+  <include file="g:\irregularBPP\env\franka_emika_panda\conveyor.xml" />
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <asset>
+    <material name="box_material" rgba="0.8 0.6 0.4 1" />
+    <material name="ground_material" rgba="0.9 0.9 0.9 1" />
+    <material name="wall_material" rgba="0.7 0.7 0.8 1" />
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="300" height="300" />
+    <material name="grid_material" texture="grid" texrepeat="8 8" rgba="0.8 0.8 0.8 1" />
+  <mesh name="obj_0" file="g:\irregularBPP\dataset\objaversestl\ShroomEyeRemix.stl" scale="0.01 0.01 0.01" /><mesh name="obj_1" file="g:\irregularBPP\dataset\objaversestl\ShroomBaseRemix.stl" scale="0.01 0.01 0.01" /><mesh name="obj_2" file="g:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount_lt.stl" scale="0.01 0.01 0.01" /><mesh name="obj_3" file="g:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl" scale="0.01 0.01 0.01" /><mesh name="obj_4" file="g:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl" scale="0.01 0.01 0.01" /></asset>
+  <worldbody>
+    <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
+    <body name="collection_box" pos="0.0 0.0 0.1">
+      <geom name="box_bottom" type="box" size="1.5 1.5 0.05" material="box_material" />
+      <geom name="box_wall1" type="box" size="1.5 0.05 0.8" pos="0 1.45 0.45" material="wall_material" />
+      <geom name="box_wall2" type="box" size="1.5 0.05 0.8" pos="0 -1.45 0.45" material="wall_material" />
+      <geom name="box_wall3" type="box" size="0.05 1.4 0.8" pos="1.45 0 0.45" material="wall_material" />
+      <geom name="box_wall4" type="box" size="0.05 1.4 0.8" pos="-1.45 0 0.45" material="wall_material" />
+    </body>
+    <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
+    <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
+  <body name="obj_0" pos="0.04915850802362746 -0.040894885354193056 -0.08447732792570523" quat="0.6020087674833867 -0.023344678540270794 -0.74481851536867 0.2868551010893737"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="-0.08430891353888119 0.4704298198055968 0.2077533968240754" quat="0.9425993691583187 -0.08471354431261241 0.012788909099946025 -0.3227483361326069"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_2" pos="0.022190549026500188 0.10890956301752132 0.18911981099360434" quat="0.9556466566881971 -0.293061156293035 0.0004164628561642482 0.02923102446973827"><joint name="freejoint_2" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_2" type="mesh" mesh="obj_2" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_3" pos="-0.0016706342232182079 0.0001591356297892441 0.19619027674525127" quat="0.9999501019851817 -0.00978408264642525 -0.0016095612154265427 0.0012143225628517148"><joint name="freejoint_3" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_3" type="mesh" mesh="obj_3" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_4" pos="-8.103162425239757e-05 -0.0029076887965200837 0.0068459030768926385" quat="0.9999182558020345 0.005061117908181242 0.01160567068873781 -0.0017819111092191493"><joint name="freejoint_4" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_4" type="mesh" mesh="obj_4" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
+</mujoco>

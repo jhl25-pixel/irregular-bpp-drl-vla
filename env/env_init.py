@@ -54,7 +54,7 @@ class MuJoCoEnvironmentInitializer:
         
         # 创建根元素
         self.root = ET.Element("mujoco", model="conveyor_box_system")
-        self._add_franka_robot()
+        self._add_franka_robot_and_conveyor()
         # 编译器设置
         compiler = ET.SubElement(self.root, "compiler")
         compiler.set("angle", "radian")
@@ -74,10 +74,10 @@ class MuJoCoEnvironmentInitializer:
         self._create_world()
 
         # 添加执行器
-        self._add_actuators()
+        #self._add_actuators()
         
         # 添加传感器
-        self._add_sensors()
+        #self._add_sensors()
         
         
         # 格式化并保存
@@ -87,14 +87,17 @@ class MuJoCoEnvironmentInitializer:
         print(f"✓ XML文件已生成: {filename}")
         print(f"✓ 盒子缩放因子: {self.box_scale}")
         print(f"✓ 盒子位置: {self.box_position}")
-        print(f"✓ 传送带尺寸: {self.conveyor_length} x {self.conveyor_width} x {self.conveyor_height}")
-        print(f"✓ 传送带位置: {self.conveyor_position}")
-        
+
         return filename
     
-    def _add_franka_robot(self):
+
+
+    def _add_franka_robot_and_conveyor(self):
         include = ET.SubElement(self.root, "include")
         include.set("file", param.robot_xml)
+
+        include2 = ET.SubElement(self.root, "include")
+        include2.set("file", param.conveyor_xml)
 
     def _add_assets(self):
         """添加材质和资源"""
@@ -103,16 +106,8 @@ class MuJoCoEnvironmentInitializer:
         # 材质定义
         materials = {
             "box_material": "0.8 0.6 0.4 1",
-            "conveyor_material": "0.3 0.3 0.3 1",
-            "conveyor_belt_material": "0.5 0.5 0.5 1",
-            "roller_material": "0.4 0.4 0.4 1",
-            "object_material": "0.2 0.8 0.2 1",
             "ground_material": "0.9 0.9 0.9 1",
             "wall_material": "0.7 0.7 0.8 1",
-            "object_red": "0.8 0.2 0.2 1",
-            "object_green": "0.2 0.8 0.2 1",
-            "object_blue": "0.2 0.2 0.8 1",
-            "object_yellow": "0.8 0.8 0.2 1"
         }
         
         for name, rgba in materials.items():
@@ -157,8 +152,7 @@ class MuJoCoEnvironmentInitializer:
         # 收集箱
         self._add_collection_box()
         
-        # 传送带系统
-        self._add_conveyor_system()
+
         
         # 光源
         self._add_lighting()
@@ -224,7 +218,7 @@ class MuJoCoEnvironmentInitializer:
             wall.set("material", "wall_material")
     
     def _add_conveyor_system(self):
-        """添加传送带系统"""
+        """添加传送带系统 - 静态版本"""
         # 传送带主体
         conveyor_body = ET.SubElement(self.worldbody, "body")
         conveyor_body.set("name", "conveyor")
@@ -258,32 +252,21 @@ class MuJoCoEnvironmentInitializer:
         right_wall.set("pos", f"0 {self.conveyor_width/2 + side_wall_thickness/2} {side_wall_height/2 - self.conveyor_height/2}")
         right_wall.set("material", "wall_material")
         
-        # 传送带滚轮
+        # 传送带滚轮 - 作为静态几何体
         roller_radius = 0.05
         roller_length = self.conveyor_width
-        num_rollers = 6  # 滚轮数量
+        num_rollers = 6
         
         for i in range(num_rollers):
-            # 计算滚轮位置
             x_pos = -self.conveyor_length/2 + (i + 0.5) * (self.conveyor_length / num_rollers)
             
-            # 滚轮主体
-            roller_body = ET.SubElement(conveyor_body, "body")
-            roller_body.set("name", f"roller_{i}")
-            roller_body.set("pos", f"{x_pos} 0 {roller_radius}")
-            
-            # 滚轮几何体
-            roller_geom = ET.SubElement(roller_body, "geom")
+            # 直接在主体上添加滚轮几何体
+            roller_geom = ET.SubElement(conveyor_body, "geom")
             roller_geom.set("name", f"roller_geom_{i}")
             roller_geom.set("type", "cylinder")
             roller_geom.set("size", f"{roller_radius} {roller_length/2}")
+            roller_geom.set("pos", f"{x_pos} 0 {roller_radius}")
             roller_geom.set("material", "roller_material")
-            
-            # 滚轮关节
-            roller_joint = ET.SubElement(roller_body, "joint")
-            roller_joint.set("name", f"roller_joint_{i}")
-            roller_joint.set("type", "hinge")
-            roller_joint.set("axis", "0 1 0")  # 绕Y轴旋转
     
 
     
@@ -332,13 +315,6 @@ class MuJoCoEnvironmentInitializer:
         side_light.set("dir", "-1 -1 -1")
         side_light.set("diffuse", "0.4 0.4 0.4")
         
-        # 传送带专用光源
-        conveyor_light = ET.SubElement(self.worldbody, "light")
-        conveyor_light.set("name", "conveyor_light")
-        conveyor_light.set("pos", f"{self.conveyor_position[0]} {self.conveyor_position[1]} {self.conveyor_position[2] + 2}")
-        conveyor_light.set("dir", "0 0 -1")
-        conveyor_light.set("diffuse", "0.6 0.6 0.6")
-        conveyor_light.set("specular", "0.1 0.1 0.1")
     
     def _add_actuators(self):
         """添加执行器"""
@@ -462,7 +438,7 @@ def generate_small_scene():
 if __name__ == "__main__":
     # 生成标准场景
     generate_initial_xml(
-        box_scale=1.0, 
+        box_scale=0.1, 
         box_position=(5, 0, 0.1),
         conveyor_length=2.5,
         conveyor_width=0.6,
