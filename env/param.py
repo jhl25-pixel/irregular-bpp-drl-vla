@@ -5,7 +5,8 @@ class param:
     obj_num=5 # state
     hidden_dim = 128
     seed=42
-    obj_scale_target_volume = 3
+    obj_scale_target_volume = 280
+    scale=0.003
     absolute_irbpp_root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     robot_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "panda.xml")
     robot_assets = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "assets")

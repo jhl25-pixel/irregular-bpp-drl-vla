@@ -98,8 +98,8 @@ if __name__ == "__main__":
                 r"G:\irregularBPP\env\franka_emika_panda\panda2.xml",
                 scale=2)
     '''
-    print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\check_rest.stl"))
-    #print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\check_rest.stl"))
+    print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL"))
+    print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\stockpart.stl"))
     #print(object_specilized_scale(r"G:\irregularBPP\env\franka_emika_panda\panda.xml"))
     
     

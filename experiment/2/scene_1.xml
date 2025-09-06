@@ -9,7 +9,7 @@
     <material name="wall_material" rgba="0.7 0.7 0.8 1" />
     <texture name="grid" type="2d" builtin="checker" rgb1="0.1 0.2 0.3" rgb2="0.2 0.3 0.4" width="300" height="300" />
     <material name="grid_material" texture="grid" texrepeat="8 8" rgba="0.8 0.8 0.8 1" />
-  <mesh name="obj_0" file="G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl" scale="0.003 0.003 0.003" /><mesh name="obj_1" file="G:\irregularBPP\dataset\objaversestl\stockpart.stl" scale="0.003 0.003 0.003" /></asset>
+  <mesh name="obj_0" file="G:\irregularBPP\dataset\objaversestl\stockpart.stl" scale="0.003 0.003 0.003" /><mesh name="obj_1" file="G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL" scale="0.003 0.003 0.003" /></asset>
   <worldbody>
     <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
     <body name="collection_box" pos="1.2000000000000002 0.4 0.020000000000000004">
@@ -21,5 +21,5 @@
     </body>
     <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
     <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
-  <body name="obj_0" pos="0.0002161980449059083 -0.0006783311813539732 -0.00016606568196309745" quat="0.9999998893953648 -2.4221285583045144e-06 -1.4383633805800537e-07 0.0004703226238563035"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="-2 -0.4 1.5" quat="1 0 0 0"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
+  <body name="obj_0" pos="-1.1999397788221702 -0.41091391568569186 0.3279601252988964" quat="0.9993276199732067 0.03666280848602191 1.1617124886625737e-05 -0.00038248874994746004"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="1 -0.4 0.6" quat="1 0 0 0"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
 </mujoco>

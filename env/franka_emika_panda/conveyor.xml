@@ -1,52 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mujoco model="fixed_conveyor_system">
-  <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
-  <option timestep="0.001" integrator="RK4" gravity="0 0 -9.81"/>
-  
-  
-  
-  <asset>
-    <material name="conveyor_mat" rgba="0.2 0.2 0.2 1"/>
-    <material name="ground_mat" rgba="0.9 0.9 0.9 1"/>
-    <material name="box_mat" rgba="0.8 0.4 0.2 1"/>
-    <material name="support_mat" rgba="0.3 0.3 0.3 1"/>
-    <texture name="moving_belt" type="2d" builtin="checker" 
-             rgb1="0.1 0.1 0.1" rgb2="0.3 0.3 0.3" 
-             width="100" height="100"/>
-    <material name="belt_material" texture="moving_belt" texrepeat="50 2" rgba="0.2 0.2 0.2 1"/>
-  </asset>
-  
-  <worldbody>
+<mujoco model="simple_rigid_conveyor">
+    <compiler angle="radian" coordinate="local" inertiafromgeom="true"/>
+    <option timestep="0.0005" integrator="RK4" gravity="0 0 -9.81" 
+            iterations="100" tolerance="1e-10"/>
+    
+    <asset>
+        <material name="conveyor_mat" rgba="0.2 0.2 0.2 1"/>
+        <material name="ground_mat" rgba="0.9 0.9 0.9 1"/>
+        <material name="box_mat" rgba="0.8 0.4 0.2 1"/>
+        <material name="support_mat" rgba="0.3 0.3 0.3 1"/>
+        <texture name="moving_belt" type="2d" builtin="checker" rgb1="0.4 0.4 0.4" width="100" height="100"/>
+        <material name="belt_material" texture="moving_belt" texrepeat="50 2" rgba="0.2 0.2 0.2 1"/>
+    </asset>
 
-    
-    <!-- 固定的传送带结构 -->
-    <body name="conveyor_frame" pos="0 -0.5 0.1">
-      <!-- 支撑结构 -->
-      <geom name="left_support" type="box" size="0.1 0.3 0.1" pos="-1.5 0 0" material="support_mat"/>
-      <geom name="right_support" type="box" size="0.1 0.3 0.1" pos="1.5 0 0" material="support_mat"/>
-      <geom name="frame_base" type="box" size="1.6 0.3 0.05" pos="0 0 -0.05" material="support_mat"/>
-      
-      <!-- 固定的传送带表面 -->
-      <geom name="belt_surface" type="box" size="1.5 0.25 0.08" pos="0 0 0.08"
-            material="belt_material"
-            friction="5.0 2.0 0.01"/>
-    </body>
-    
-    <!-- 测试物体 -->
-    <body name="test_box1" pos="-1.0 -0.5 0.3">
-      <joint name="box1_free" type="free"/>
-      <inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01"/>
-      <geom name="box1_geom" type="box" size="0.05 0.05 0.05" material="box_mat"/>
-    </body>
-    
-    <body name="test_box2" pos="-0.5 -0.5 0.3">
-      <joint name="box2_free" type="free"/>
-      <inertial pos="0 0 0" mass="0.08" diaginertia="0.008 0.008 0.008"/>
-      <geom name="box2_geom" type="box" size="0.04 0.04 0.04" material="box_mat"/>
-    </body>
-    
-    <!-- 照明 -->
-    <light name="side_light1" pos="3 3 3" dir="-1 -1 -1" diffuse="0.4 0.4 0.4"/>
-    <light name="side_light2" pos="-3 3 3" dir="1 -1 -1" diffuse="0.4 0.4 0.4"/>
-  </worldbody>
+    <worldbody>
+
+        
+        <!-- 支撑结构 -->
+        <geom name="left_support" type="box" size="0.1 0.3 0.1" pos="-1.5 -0.5 0.1" 
+              material="support_mat" condim="6" friction="1.0 0.1 0.01"/>
+        <geom name="right_support" type="box" size="0.1 0.3 0.1" pos="1.5 -0.5 0.1" 
+              material="support_mat" condim="6" friction="1.0 0.1 0.01"/>
+        <geom name="frame_base" type="box" size="1.6 0.3 0.05" pos="0 -0.5 0.05" 
+              material="support_mat" condim="6" friction="1.0 0.1 0.01"/>
+        
+        <!-- 超刚性传送带表面 -->
+        <geom name="belt_surface" type="box" size="1.5 0.25 0.08" pos="0 -0.5 0.18"
+              material="belt_material"
+              condim="6"
+              friction="5.0 2.0 0.01"
+              solref="0.001 1"
+              solimp="0.999 0.999 0.0001"
+              margin="0.001"
+              gap="0.0"/>
+        
+        <!-- 护栏 -->
+        <geom name="left_rail" type="box" size="1.5 0.02 0.05" pos="0 -0.77 0.23" 
+              material="support_mat" condim="6" friction="1.0 0.1 0.01"/>
+        <geom name="right_rail" type="box" size="1.5 0.02 0.05" pos="0 -0.23 0.23" 
+              material="support_mat" condim="6" friction="1.0 0.1 0.01"/>
+
+        <!-- 测试物体 - 从更高位置开始 -->
+        <body name="test_box1" pos="-1.0 -0.5 0.5">
+            <joint name="box1_free" type="free"/>
+            <inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01"/>
+            <geom name="box1_geom" type="box" size="0.05 0.05 0.05"
+                  material="box_mat"
+                  condim="6"
+                  friction="0.8 0.1 0.01"
+                  solref="0.001 1"
+                  solimp="0.999 0.999 0.0001"
+                  margin="0.001"
+                  gap="0.0"/>
+        </body>
+
+        <body name="test_box2" pos="-0.5 -0.5 0.5">
+            <joint name="box2_free" type="free"/>
+            <inertial pos="0 0 0" mass="0.08" diaginertia="0.008 0.008 0.008"/>
+            <geom name="box2_geom" type="box" size="0.04 0.04 0.04"
+                  material="box_mat"
+                  condim="6"
+                  friction="0.8 0.1 0.01"
+                  solref="0.001 1"
+                  solimp="0.999 0.999 0.0001"
+                  margin="0.001"
+                  gap="0.0"/>
+        </body>
+
+        <!-- 照明 -->
+        <light name="top_light" pos="0 0 4" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
+        <light name="side_light1" pos="3 3 3" dir="-1 -1 -1" diffuse="0.4 0.4 0.4"/>
+        <light name="side_light2" pos="-3 3 3" dir="1 -1 -1" diffuse="0.4 0.4 0.4"/>
+    </worldbody>
 </mujoco>

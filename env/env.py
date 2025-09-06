@@ -6,9 +6,9 @@ import datetime
 import os
 import sys
 import shutil
-import utils
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
+import utils
 from param import param
 from env_init import MuJoCoEnvironmentInitializer, generate_initial_xml
 from simulator import simulator
@@ -125,7 +125,7 @@ class MujocoPackingEnv:
         mesh_elem.set('file', obj_path)
 
         #scale = utils.object_specilized_scale(obj_path)
-        scale = 0.003
+        scale = param.scale
         mesh_elem.set('scale', f"{scale} {scale} {scale}")
 
         worldbody = root.find('worldbody')
@@ -310,10 +310,20 @@ def test_convor_location():
     env.step([1, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL")
     env.step([1.5, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
 
+def test_hard_structure_of_robotics():
+    env.step([-0.7, 0, 5.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
+
+def test_useful_objects():
+    #env.step([-1.3, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl") #L形状物体
+    env.step([-1.2, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl") #船形物体
+    env.step([1, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL") 
+    #env.step([1.2, -0.4, 0.3], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
+
 if __name__ == "__main__":
     
     #test_one_step()
     env = build_the_env()
-    env.step([-0.7, 0, 5.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
-    #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\check_rest.stl")
-    #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount_lt.stl")
+    #env.step([-1.3, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl") #L形状物体
+    env.step([-1.2, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl") #船形物体
+    env.step([1, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL") #玩具
+    #env.step([1.2, -0.4, 0.3], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
