@@ -2,7 +2,7 @@
   <include file="g:\irregularBPP\env\franka_emika_panda\panda.xml" />
   <include file="g:\irregularBPP\env\franka_emika_panda\conveyor.xml" />
   <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
-  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <option timestep="0.001" gravity="0 0 -9.81" integrator="RK4" />
   <asset>
     <material name="box_material" rgba="0.8 0.6 0.4 1" />
     <material name="ground_material" rgba="0.9 0.9 0.9 1" />
@@ -21,5 +21,5 @@
     </body>
     <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
     <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
-  <body name="obj_0" pos="-1.024328424503479 -0.3679666447879122 -0.0005477378905485879" quat="0.999881538000566 -0.002700326511907627 -0.0007587000195565605 0.015134152656567113"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="-1.004557142503999 -0.3818428188848365 0.0879185149523518" quat="0.9980742697744226 0.0369923084463922 0.0007629051358948917 0.049786937100164984"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.001 0.001 0.001" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
+  <body name="obj_0" pos="0.00021120993142385142 -0.000677973831951604 -0.00016343697399702673" quat="0.9999998812141947 -3.5557403401624668e-06 3.4221957618543545e-06 0.0004873881846423976"><joint name="freejoint_0" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_0" type="mesh" mesh="obj_0" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body><body name="obj_1" pos="-1.9977581090808412 -0.40508341492130306 0.08773034156751776" quat="0.9992995690535437 0.03672745968839242 -0.00025356883738905585 -0.007169427946791865"><joint name="freejoint_1" type="free" /><inertial pos="0 0 0" mass="1.0" diaginertia="0.01 0.01 0.01" /><geom name="obj_geom_1" type="mesh" mesh="obj_1" rgba="0.8 0.6 0.2 1" friction="0.7 0.01 0.01" /></body></worldbody>
 </mujoco>

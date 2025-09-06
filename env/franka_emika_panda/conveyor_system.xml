@@ -3,7 +3,7 @@
   <include file="g:\irregularBPP\env\franka_emika_panda\panda.xml" />
   <include file="g:\irregularBPP\env\franka_emika_panda\conveyor.xml" />
   <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
-  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4" />
+  <option timestep="0.001" gravity="0 0 -9.81" integrator="RK4" />
   <asset>
     <material name="box_material" rgba="0.8 0.6 0.4 1" />
     <material name="ground_material" rgba="0.9 0.9 0.9 1" />

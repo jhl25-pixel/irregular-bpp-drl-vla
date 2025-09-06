@@ -63,7 +63,7 @@ class MuJoCoEnvironmentInitializer:
         
         # 仿真选项
         option = ET.SubElement(self.root, "option")
-        option.set("timestep", "0.01")
+        option.set("timestep", "0.001")
         option.set("gravity", "0 0 -9.81")
         option.set("integrator", "RK4")
         
@@ -90,9 +90,14 @@ class MuJoCoEnvironmentInitializer:
 
         return filename
     
+    def _add_default_information(self):
 
+        default = ET.SubElement(self.root, "default")
+        
 
     def _add_franka_robot_and_conveyor(self):
+
+
         include = ET.SubElement(self.root, "include")
         include.set("file", param.robot_xml)
 

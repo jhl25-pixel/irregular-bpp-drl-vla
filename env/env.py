@@ -144,7 +144,7 @@ class MujocoPackingEnv:
         inertial_elem = ET.SubElement(body_elem, 'inertial')
         inertial_elem.set('pos', '0 0 0')
         inertial_elem.set('mass', '1.0')  # 设置质量
-        inertial_elem.set('diaginertia', '0.001 0.001 0.001')  # 设置惯性矩
+        inertial_elem.set('diaginertia', '0.01 0.01 0.01')  # 设置惯性矩
 
         # 添加几何体和碰撞
         geom_elem = ET.SubElement(body_elem, 'geom')
@@ -304,13 +304,16 @@ def test_one_step():
         if done: 
             break
 
+def test_convor_location():
+    env.step([-1.5, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
+    env.step([-2, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl")
+    env.step([1, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL")
+    env.step([1.5, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
+
 if __name__ == "__main__":
     
     #test_one_step()
     env = build_the_env()
-    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
-    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl")
-    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL")
-    env.step([-1, -0.35, 0.5], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")
+    env.step([-0.7, 0, 5.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
     #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\check_rest.stl")
     #env.step([-1, -0.35, 0.5], "G:\irregularBPP\dataset\objaversestl\HANDLE_ENDER_3_mount_lt.stl")
