@@ -324,6 +324,6 @@ if __name__ == "__main__":
     #test_one_step()
     env = build_the_env()
     #env.step([-1.3, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl") #L形状物体
-    env.step([-1.2, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl") #船形物体
-    env.step([1, -0.4, 0.6], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL") #玩具
+    env.step([-1.2, -0.4, 1.6], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl") #船形物体
+    env.step([1, -0.4, 1.6], r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL") #玩具
     #env.step([1.2, -0.4, 0.3], r"G:\irregularBPP\dataset\objaversestl\ShroomTopRemix.stl")

@@ -1,9 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mujoco model="conveyor_box_system">
-  <default> 
-    <joint damping="0.1"/>
-    <geom friction="1 0.5 0.005"/>
-  </default>
   <include file="g:\irregularBPP\env\franka_emika_panda\panda.xml" />
   <include file="g:\irregularBPP\env\franka_emika_panda\conveyor.xml" />
   <compiler angle="radian" coordinate="local" inertiafromgeom="true" />

@@ -11,6 +11,8 @@ import time
 
 import utils
 import param
+import conveyor
+
 def view_xml(xml_path):
     """简单查看XML文件"""
     
@@ -41,6 +43,13 @@ def view_xml(xml_path):
             if model.nu > 0:
                 for i in range(min(model.nu, 2)):
                     data.ctrl[i] = 3.0  # 设置履带速度
+            # 清除之前的外力
+            data.xfrc_applied[:] = 0
+            
+            # 对传送带上的物体施加力
+            
+
+            
             
             # 仿真一步
             mujoco.mj_step(model, data)
@@ -65,7 +74,7 @@ if __name__ == "__main__":
     
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str)
+    parser.add_argument("--path", type=str, default="G:\irregularBPP\experiment\1\scene_0.xml")
     args = parser.parse_args()
-    #view_robot(r"G:\irregularBPP\env\franka_emika_panda\scene.xml")
+    #view_robot(r"G:\irregularBPP\experiment\2\scene_1.xml")
     view_robot(args.path)

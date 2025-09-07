@@ -1,0 +1,47 @@
+<mujoco model="fixed_conveyor_system">
+  <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+  <option timestep="0.001" integrator="RK4" gravity="0 0 -9.81" />
+  
+  
+  
+  <asset>
+    <material name="conveyor_mat" rgba="0.2 0.2 0.2 1" />
+    <material name="ground_mat" rgba="0.9 0.9 0.9 1" />
+    <material name="box_mat" rgba="0.8 0.4 0.2 1" />
+    <material name="support_mat" rgba="0.3 0.3 0.3 1" />
+    <texture name="moving_belt" type="2d" builtin="checker" rgb1="0.1 0.1 0.1" rgb2="0.3 0.3 0.3" width="100" height="100" />
+    <material name="belt_material" texture="moving_belt" texrepeat="50 2" rgba="0.2 0.2 0.2 1" />
+  </asset>
+  
+  <worldbody>
+
+    
+    
+    <body name="conveyor_frame" pos="0 -0.5 0.1">
+      
+      <geom name="left_support" type="box" size="0.1 0.3 0.08" pos="-10 0.0 0.0" material="support_mat" />
+      <geom name="right_support" type="box" size="0.1 0.3 0.08" pos="10 0.0 0.0" material="support_mat" />
+      <geom name="frame_base" type="box" size="10.1 0.3 0.05" pos="0.0 0.0 0.04" material="support_mat" />
+      
+      
+      <geom name="belt_surface" type="box" size="10 0.25 0.08" pos="0.0 0.0 0.12" material="belt_material" friction="5.0 2.0 0.01" />
+    </body>
+    
+    
+    <body name="test_box1" pos="-1.0 -0.5 0.3">
+      <joint name="box1_free" type="free" />
+      <inertial pos="0 0 0" mass="0.1" diaginertia="0.01 0.01 0.01" />
+      <geom name="box1_geom" type="box" size="0.05 0.05 0.05" material="box_mat" />
+    </body>
+    
+    <body name="test_box2" pos="-0.5 -0.5 0.3">
+      <joint name="box2_free" type="free" />
+      <inertial pos="0 0 0" mass="0.08" diaginertia="0.008 0.008 0.008" />
+      <geom name="box2_geom" type="box" size="0.04 0.04 0.04" material="box_mat" />
+    </body>
+    
+    
+    <light name="side_light1" pos="3 3 3" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
+    <light name="side_light2" pos="-3 3 3" dir="1 -1 -1" diffuse="0.4 0.4 0.4" />
+  </worldbody>
+</mujoco>
