@@ -39,16 +39,15 @@ def view_xml(xml_path):
         while viewer.is_running():
             step_start = time.time()
             
-            # 如果有执行器，让履带转动
-            if model.nu > 0:
-                for i in range(min(model.nu, 2)):
-                    data.ctrl[i] = 3.0  # 设置履带速度
+            
             # 清除之前的外力
             data.xfrc_applied[:] = 0
             
             # 对传送带上的物体施加力
             
-
+            conveyor.apply_conveyor_velocity_simple(
+                model, data, param.param.conveyor_xml, conveyor_speed=0.3
+            )
             
             
             # 仿真一步
@@ -71,7 +70,9 @@ def view_robot(xml_file):
 
 
 if __name__ == "__main__":
-    
+    '''
+    E:/Install_Location/anaconda3/envs/mujoco/python.exe g:/irregularBPP/env/viewer.py
+    '''
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, default="G:\irregularBPP\experiment\1\scene_0.xml")
