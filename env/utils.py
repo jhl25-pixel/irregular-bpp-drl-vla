@@ -102,8 +102,7 @@ def return_conveyor_range_worldbody(xml_path):
             data = [pos[i] - sizes[i] for i in range(len(pos))], [pos[i] + sizes[i] for i in range(len(pos))]
     return np.array(data)
 
-
-def return_conveyor_range(xml_path):
+def return_connector_range_worldbody(xml_path):
 
     '''
     return x min, y min, zmin, x max, y max, z max
@@ -113,14 +112,25 @@ def return_conveyor_range(xml_path):
     root = tree.getroot()
     worldbody = root.find("worldbody")
     data = []
-    for bodies in worldbody.findall("body"):
-        if bodies.get("name") == "conveyor_frame":
-            pos = [float(i) for i in bodies.get("pos").split(" ")]
-            for item in bodies.findall("geom"):
-                if item.get("name")=="belt_surface":
-                    sizes = [float(i) for i in item.get("size").split(" ")]
-                    data = [pos[i] - sizes[i] for i in range(len(pos))], [pos[i] + sizes[i] for i in range(len(pos))]
+    for bodies in worldbody.findall("geom"):
+        pos = [float(i) for i in bodies.get("pos").split(" ")]
+        if bodies.get("name")=="connection_bridge":
+            sizes = [float(i) for i in bodies.get("size").split(" ")]
+            data = [pos[i] - sizes[i] for i in range(len(pos))], [pos[i] + sizes[i] for i in range(len(pos))]
     return np.array(data)
+
+def return_host_range_worldbody(xml_path):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    worldbody = root.find("worldbody")
+    data = []
+    for bodies in worldbody.findall("geom"):
+        pos = [float(i) for i in bodies.get("pos").split(" ")]
+        if bodies.get("name")=="warehouse_floor":
+            sizes = [float(i) for i in bodies.get("size").split(" ")]
+            data = [pos[i] - sizes[i] for i in range(len(pos))], [pos[i] + sizes[i] for i in range(len(pos))]
+    return np.array(data)
+
 
 def is_on_conveyor(body_pos, conveyor_min, conveyor_max, tolerance=0.1):
     """
@@ -130,6 +140,28 @@ def is_on_conveyor(body_pos, conveyor_min, conveyor_max, tolerance=0.1):
     x, y, z = body_pos
     x_min, y_min, z_min = conveyor_min
     x_max, y_max, z_max = conveyor_max
+    
+    # 检查XY平面是否在传送带范围内，Z轴是否在表面附近
+    return (x_min <= x <= x_max and 
+            y_min <= y <= y_max and 
+            abs(z - z_max) <= tolerance)
+
+def is_on_host(body_pos, host_min, host_max, tolerance=0.1):
+
+    x, y, z = body_pos
+    x_min, y_min, z_min = host_min
+    x_max, y_max, z_max = host_max
+    
+    # 检查XY平面是否在传送带范围内，Z轴是否在表面附近
+    return (x_min <= x <= x_max and 
+            y_min <= y <= y_max and 
+            abs(z - z_max) <= tolerance)
+
+def is_on_bridge(body_pos, bridge_min, bridge_max, tolerance=0.1):
+
+    x, y, z = body_pos
+    x_min, y_min, z_min = bridge_min
+    x_max, y_max, z_max = bridge_max
     
     # 检查XY平面是否在传送带范围内，Z轴是否在表面附近
     return (x_min <= x <= x_max and 

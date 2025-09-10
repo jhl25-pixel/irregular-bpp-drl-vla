@@ -46,7 +46,7 @@ def view_xml(xml_path):
             # 对传送带上的物体施加力
             
             conveyor.apply_conveyor_velocity_simple(
-                model, data, param.param.conveyor_xml, conveyor_speed=0.3
+                model, data, param.param.conveyor_xml, conveyor_speed=param.param.conveyor_speed
             )
             
             
