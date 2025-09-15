@@ -168,7 +168,53 @@ def is_on_bridge(body_pos, bridge_min, bridge_max, tolerance=0.1):
             y_min <= y <= y_max and 
             abs(z - z_max) <= tolerance)
 
+def compute_xyaxes_for_certain_direction(location_target : list, location_camera : list):
+    import numpy as np
+    assert len(location_target) == len(location_camera)
+    z_vector = np.array([location_target[i] - location_camera[i] for i in range(len(location_target))])
+    if abs(z_vector[1]) < 0.001:
+        y_vector = np.array([0, 1.0, 0])
+    else:
+        y_vector = np.array([1.0, -z_vector[0] / z_vector[1], 0])
+
+    x_vector = np.cross(z_vector, y_vector)
+    if np.dot(np.cross(z_vector, y_vector), z_vector) < 0:
+        y_vector = -y_vector
+    return x_vector, y_vector
+
+def return_camera_position(xml_path, camera_name):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    worldbody = root.find("worldbody")
+    cameras = worldbody.findall("camera")
+    for camera in cameras:
+        if camera_name == camera.get("name"):
+            return [float(i) for i in camera.get("pos").split(" ")]
+    
+
+def set_camera_direction(xml_path, camera_name, xyaxes):
+    '''
+    note that xyaxes refers to "a b c d e f", the axes
+    '''
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+
+    worldbody = root.find("worldbody")
+    cameras = worldbody.findall("camera")
+    for camera in cameras:
+        if camera_name == camera.get("name"):
+            camera.set("xyaxes", xyaxes)
+
+    tree.write(xml_path)
+
 if __name__ == "__main__":
+    import numpy as np
+    print(return_camera_position(param.param.conveyor_xml, "wrist_cam"))
+    x_v, y_v = compute_xyaxes_for_certain_direction([0, 0, 0], return_camera_position(param.param.conveyor_xml, "wrist_cam"))
+    print(np.concatenate((x_v, y_v)))
+    set_camera_direction(param.param.conveyor_xml, "wrist_cam", np.concatenate((x_v, y_v)))
+    #print(x)
     '''
     convert_stl_from_ascii_to_binary(r"G:\irregularBPP\dataset\objav ersestl\nametag_20191103-68-bhpt8a.stl",
                                      r"G:\irregularBPP\dataset\objaversestl\nametag_20191103-68-bhpt8a2.stl")
@@ -185,5 +231,5 @@ if __name__ == "__main__":
     #print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\single_joycon_grip-.STL"))
     #print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\stockpart.stl"))
     #print(object_specilized_scale(r"G:\irregularBPP\env\franka_emika_panda\panda.xml"))
-    print(return_conveyor_range_worldbody(r"G:\irregularBPP\env\franka_emika_panda\conveyor.xml"))
+    #print(return_conveyor_range_worldbody(r"G:\irregularBPP\env\franka_emika_panda\conveyor.xml"))
     

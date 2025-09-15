@@ -1,5 +1,5 @@
 <mujoco model="conveyor_with_warehouse">
-    <compiler angle="radian" coordinate="local" inertiafromgeom="true" />
+    <compiler angle="radian" coordinate="local" inertiafromgeom="true" eulerseq="xyz" />
     <option timestep="0.0005" integrator="RK4" gravity="0 0 -9.81" iterations="100" tolerance="1e-10" />
     
     <asset>
@@ -17,6 +17,9 @@
 
         
         
+        <camera name="wrist_cam" pos="-3 0 2" xyaxes="[ 2. -0.  3.  0.  1.  0.]" />
+        <camera name="shoulder_cam" pos="0.5 0.5 0.8" /> 
+        <camera name="base_cam" pos="3.0 0 1.2" />
         
         <geom name="warehouse_floor" type="box" size="3.8 0.6 0.15" pos="-5.3 -0.5 0.05" material="warehouse_mat" condim="6" friction="0 0.1 0.01" />
         
