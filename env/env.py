@@ -87,7 +87,7 @@ class rewarder:
 class MujocoPackingEnv:
 
     def __init__(self, xml_path, initial_packing_object):
-
+        
         self.initial_xml_path = xml_path
         self.current_xml_path = xml_path
         self.model = mj.MjModel.from_xml_path(xml_path)
@@ -168,6 +168,8 @@ class MujocoPackingEnv:
         self.current_xml_path = os.path.join(param.result_path_now, temp_xml)
         return os.path.join(param.result_path_now, temp_xml)
     
+
+
     def simulate_drop(self, max_steps=2000):
 
         mj.mj_resetData(self.model, self.data)
