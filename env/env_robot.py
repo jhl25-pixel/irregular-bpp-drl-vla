@@ -28,7 +28,7 @@ class MujocoPackingEnv:
         self.curr_packing_object = []
         self.current_item_idx = 0
 
-    def add_object_to_packing_region():
+    def add_object_to_packing_region(self):
         
         tree = ET.parse(self.current_xml_path)
         root = tree.getroot()
