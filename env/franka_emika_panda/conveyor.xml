@@ -17,9 +17,15 @@
 
         
         
-        <camera name="wrist_cam" pos="-3 0 2" xyaxes="2.0 -0.0 3.0 0.0 1.0 0.0" />
-        <camera name="shoulder_cam" pos="0.5 0.5 0.8" /> 
-        <camera name="base_cam" pos="3.0 0 1.2" />
+        <!-- Cameras: front, side, top-down, egocentric (robot-eye), wrist -->
+        <!-- front view: positioned in front of the robot looking toward negative x (adjust as needed) -->
+        <camera name="front_cam" pos="2.5 0 0.8" xyaxes="0 1 0 0 0 1" />
+        <!-- side view: positioned to the right side, looking toward robot center -->
+        <camera name="side_cam" pos="0 -2.5 0.8" xyaxes="1 0 0 0 0 1" />
+        <!-- top-down view: high above looking straight down -->
+        <camera name="topdown_cam" pos="0 0 4.0" xyaxes="1 0 0 0 1 0" />
+
+
         
         <geom name="warehouse_floor" type="box" size="3.8 0.6 0.15" pos="-5.3 -0.5 0.05" material="warehouse_mat" condim="6" friction="0 0.1 0.01" />
         

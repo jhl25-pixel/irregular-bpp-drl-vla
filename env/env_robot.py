@@ -32,7 +32,8 @@ class MujocoPackingEnv:
         # renderer will be created on demand (recreated when model changes)
         self.renderer = None
         # camera names defined in conveyor.xml
-        self.camera_names = ["wrist_cam", "shoulder_cam", "base_cam"]
+        # front_cam: front view, side_cam: side view, topdown_cam: top-down, egocentric_cam: robot-eye, wrist_cam: wrist
+        self.camera_names = ["front_cam", "side_cam", "topdown_cam", "egocentric_cam", "wrist_cam"]
 
     def add_object_to_scene(self, x, y, z, obj_path=None):
 
