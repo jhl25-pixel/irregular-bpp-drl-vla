@@ -132,6 +132,66 @@ def return_host_range_worldbody(xml_path):
     return np.array(data)
 
 
+def return_collection_box_range_worldbody(xml_path):
+    """
+    Compute an axis-aligned bounding box (min, max) in world coordinates for the
+    body named 'collection_box' by aggregating its child geoms (box types use
+    the 'size' attribute as half-sizes). Returns (min, max) as two numpy arrays
+    with shape (3,). If the body or sizes cannot be found, returns a reasonable
+    default around the body's pos.
+    """
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    worldbody = root.find("worldbody")
+
+    # find collection_box body
+    for body in worldbody.findall('body'):
+        if body.get('name') == 'collection_box':
+            # body world position
+            body_pos = np.array([float(x) for x in body.get('pos', '0 0 0').split()])
+            mins = []
+            maxs = []
+            # look for geoms under this body
+            for geom in body.findall('geom'):
+                pos = geom.get('pos', '0 0 0')
+                pos = np.array([float(x) for x in pos.split()]) + body_pos
+                size_attr = geom.get('size')
+                if size_attr:
+                    half = np.array([float(x) for x in size_attr.split()])
+                    mins.append(pos - half)
+                    maxs.append(pos + half)
+                else:
+                    # if no size (e.g. mesh), try to use small epsilon around pos
+                    eps = np.array([0.05, 0.05, 0.05])
+                    mins.append(pos - eps)
+                    maxs.append(pos + eps)
+
+            if len(mins) > 0:
+                overall_min = np.min(np.stack(mins, axis=0), axis=0)
+                overall_max = np.max(np.stack(maxs, axis=0), axis=0)
+                return np.array(overall_min), np.array(overall_max)
+            else:
+                # fallback: return body_pos +/- defaults
+                default_min = body_pos + np.array([-1.4, -1.4, -0.4])
+                default_max = body_pos + np.array([1.4, 1.4, 0.9])
+                return np.array(default_min), np.array(default_max)
+
+    # if not found, fallback to origin-centered default
+    return np.array([-1.4, -1.4, -0.4]), np.array([1.4, 1.4, 0.9])
+
+
+def is_on_box(body_pos, box_min, box_max, tolerance: float = 0.0):
+    """
+    Return True if body_pos (iterable of length 3) lies within the axis-aligned
+    box defined by box_min and box_max (both array-like length 3). tolerance is
+    applied as an extra margin (in world units) around the box.
+    """
+    p = np.array(body_pos)
+    min_arr = np.array(box_min) - tolerance
+    max_arr = np.array(box_max) + tolerance
+    return bool(np.all(p >= min_arr) and np.all(p <= max_arr))
+
+
 def is_on_conveyor(body_pos, conveyor_min, conveyor_max, tolerance=0.1):
     """
     检查物体是否在传送带表面上
@@ -204,7 +264,7 @@ def set_camera_direction(xml_path, camera_name, xyaxes):
     cameras = worldbody.findall("camera")
     for camera in cameras:
         if camera_name == camera.get("name"):
-            camera.set("xyaxes", xyaxes)
+            camera.set("xyaxes", " ".join([str(i) for i in xyaxes]))
 
     tree.write(xml_path)
 
@@ -232,4 +292,8 @@ if __name__ == "__main__":
     #print(object_specilized_scale(r"G:\irregularBPP\dataset\objaversestl\stockpart.stl"))
     #print(object_specilized_scale(r"G:\irregularBPP\env\franka_emika_panda\panda.xml"))
     #print(return_conveyor_range_worldbody(r"G:\irregularBPP\env\franka_emika_panda\conveyor.xml"))
+    #print(return_collection_box_range_worldbody(r"D:\lab\irregular-bpp-drl-vla\env\franka_emika_panda\conveyor_system.xml"))
+    #min_range, max_range = return_collection_box_range_worldbody(r"D:\lab\irregular-bpp-drl-vla\env\franka_emika_panda\conveyor_system.xml")
+    #print(is_on_box([0, 0, 0], min_range, max_range, tolerance=0.0))
+
     

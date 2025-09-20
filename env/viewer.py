@@ -75,7 +75,7 @@ if __name__ == "__main__":
     '''
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, default="G:\irregularBPP\experiment\1\scene_0.xml")
+    parser.add_argument("--path", type=str, default=r"D:\lab\irregular-bpp-drl-vla\env\franka_emika_panda\conveyor_system.xml")
     args = parser.parse_args()
     #view_robot(r"G:\irregularBPP\experiment\2\scene_1.xml")
     view_robot(args.path)

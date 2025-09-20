@@ -17,7 +17,7 @@
 
         
         
-        <camera name="wrist_cam" pos="-3 0 2" xyaxes="[ 2. -0.  3.  0.  1.  0.]" />
+        <camera name="wrist_cam" pos="-3 0 2" xyaxes="2.0 -0.0 3.0 0.0 1.0 0.0" />
         <camera name="shoulder_cam" pos="0.5 0.5 0.8" /> 
         <camera name="base_cam" pos="3.0 0 1.2" />
         
