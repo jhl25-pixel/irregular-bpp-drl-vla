@@ -9,7 +9,7 @@ import shutil
 import matplotlib.pyplot as plt
 import torch
 
-sys.path.append(os.path.join(os.path.dirname(__file__)))
+
 import utils
 from param import param
 from env_init import MuJoCoEnvironmentInitializer, generate_initial_xml
@@ -176,7 +176,7 @@ class MujocoPackingEnv:
         for camera_name in self.camera_names:
             obj_states.append(self.return_image(camera_name))
         
-        return state, float(reward), bool(done), info
+        
 
 
 def build_the_env():
@@ -198,7 +198,7 @@ def build_the_env():
 
 if __name__ == "__main__":
     env = build_the_env()
-    img = env.return_image('front_cam')
+    img = env.return_image('wrist_cam')
     plt.imshow(img)
     plt.axis('off') 
     plt.show()

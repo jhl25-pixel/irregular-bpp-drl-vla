@@ -4,6 +4,7 @@ import os
 import mujoco as mj
 import random
 
+
 from simulator import simulator
 from param import param
 from utils import is_binary_stl
