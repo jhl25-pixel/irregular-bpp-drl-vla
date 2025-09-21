@@ -268,12 +268,20 @@ def set_camera_direction(xml_path, camera_name, xyaxes):
 
     tree.write(xml_path)
 
+def return_image(camera_name='wrist_cam', width=640, height=480):
+    '''
+    伪代码，视你的 mujoco 版本而定
+    '''
+    import renderer
+    img = renderer.render(camera=camera_name, width=640, height=480)
+    return img
+
 if __name__ == "__main__":
-    import numpy as np
-    print(return_camera_position(param.param.conveyor_xml, "wrist_cam"))
-    x_v, y_v = compute_xyaxes_for_certain_direction([0, 0, 0], return_camera_position(param.param.conveyor_xml, "wrist_cam"))
-    print(np.concatenate((x_v, y_v)))
-    set_camera_direction(param.param.conveyor_xml, "wrist_cam", np.concatenate((x_v, y_v)))
+    #import numpy as np
+    #print(return_camera_position(param.param.conveyor_xml, "wrist_cam"))
+    #x_v, y_v = compute_xyaxes_for_certain_direction([0, 0, 0], return_camera_position(param.param.conveyor_xml, "wrist_cam"))
+    #print(np.concatenate((x_v, y_v)))
+    #set_camera_direction(param.param.conveyor_xml, "wrist_cam", np.concatenate((x_v, y_v)))
     #print(x)
     '''
     convert_stl_from_ascii_to_binary(r"G:\irregularBPP\dataset\objav ersestl\nametag_20191103-68-bhpt8a.stl",
@@ -296,4 +304,5 @@ if __name__ == "__main__":
     #min_range, max_range = return_collection_box_range_worldbody(r"D:\lab\irregular-bpp-drl-vla\env\franka_emika_panda\conveyor_system.xml")
     #print(is_on_box([0, 0, 0], min_range, max_range, tolerance=0.0))
 
+    
     

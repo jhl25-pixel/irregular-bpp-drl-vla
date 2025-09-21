@@ -306,6 +306,8 @@ def test_one_step():
         if done: 
             break
 
+
+
 def test_convor_location():
     env.step([-1.5, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\SurfaceMountV3Right.stl")
     env.step([-2, -0.4, 1.5], r"G:\irregularBPP\dataset\objaversestl\stockpart.stl")

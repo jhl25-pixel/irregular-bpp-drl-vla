@@ -24,6 +24,8 @@ class MujocoPackingEnv:
         self.current_xml_path = xml_path
         self.model = mj.MjModel.from_xml_path(xml_path)
         self.data = mj.MjData(self.model)
+        self.renderer = mj.Renderer()
+        self.renderer.set_model(self.model)
         self.state_agent = N_OBJ_State(self.current_xml_path)
 
         self.initial_packing_object = initial_packing_object
@@ -111,6 +113,19 @@ class MujocoPackingEnv:
                 break
         return self.current_xml_path
     
+    def return_image(self, camera_name='wrist_cam', width=640, height=480):
+        '''
+        Return an RGB image from the specified camera.
+
+        Args:
+            camera_name (str): Name of the camera as defined in the XML.
+            width (int): Width of the output image.
+            height (int): Height of the output image.
+        '''
+        img = self.renderer.render(camera=camera_name, width=width, height=height)
+        return img
+
+
     def step(self, action=None, n_substeps:int=10, render:bool=False):
         """
         Apply an action to the robot actuators and step the MuJoCo simulation.
@@ -259,3 +274,25 @@ class MujocoPackingEnv:
             info['images'] = images
 
         return state, float(reward), bool(done), info
+
+
+def build_the_env():
+    xml_file = generate_initial_xml(
+        box_scale=0.2, 
+        box_position=(6, 2, 0.1),
+        conveyor_length=2.5,
+        conveyor_width=0.6,
+        conveyor_position=(-10, 10, 0.5),
+        object_num=25
+    )
+
+    data_simulator = simulator(param.data_path, data_type="stl")
+    simulated_object_list = data_simulator._roll_the_dice(param.data_num)
+
+    env = MujocoPackingEnv(xml_file, simulated_object_list)
+    env.init()
+    return env
+
+if __name__ == "__main__":
+    env = build_the_env()
+    print(env.return_image('wrist_cam', 320, 240).shape)

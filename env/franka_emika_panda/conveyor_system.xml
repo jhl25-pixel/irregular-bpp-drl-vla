@@ -13,15 +13,14 @@
   </asset>
   <worldbody>
     <geom name="ground" type="plane" size="10 10 0.1" material="grid_material" />
-    <body name="collection_box" pos="0.5 0.0 0.010000000000000002">
-      <geom name="box_bottom" type="box" size="0.15000000000000002 0.15000000000000002 0.005000000000000001" material="box_material" />
-      <geom name="box_wall1" type="box" size="0.15000000000000002 0.005000000000000001 0.08000000000000002" pos="0 0.14500000000000002 0.04500000000000001" material="wall_material" />
-      <geom name="box_wall2" type="box" size="0.15000000000000002 0.005000000000000001 0.08000000000000002" pos="0 -0.14500000000000002 0.04500000000000001" material="wall_material" />
-      <geom name="box_wall3" type="box" size="0.005000000000000001 0.14 0.08000000000000002" pos="0.14500000000000002 0 0.04500000000000001" material="wall_material" />
-      <geom name="box_wall4" type="box" size="0.005000000000000001 0.14 0.08000000000000002" pos="-0.14500000000000002 0 0.04500000000000001" material="wall_material" />
+    <body name="collection_box" pos="1.2000000000000002 0.4 0.020000000000000004">
+      <geom name="box_bottom" type="box" size="0.30000000000000004 0.30000000000000004 0.010000000000000002" material="box_material" />
+      <geom name="box_wall1" type="box" size="0.30000000000000004 0.010000000000000002 0.16000000000000003" pos="0 0.29000000000000004 0.09000000000000002" material="wall_material" />
+      <geom name="box_wall2" type="box" size="0.30000000000000004 0.010000000000000002 0.16000000000000003" pos="0 -0.29000000000000004 0.09000000000000002" material="wall_material" />
+      <geom name="box_wall3" type="box" size="0.010000000000000002 0.28 0.16000000000000003" pos="0.29000000000000004 0 0.09000000000000002" material="wall_material" />
+      <geom name="box_wall4" type="box" size="0.010000000000000002 0.28 0.16000000000000003" pos="-0.29000000000000004 0 0.09000000000000002" material="wall_material" />
     </body>
     <light name="main_light" pos="0 0 10" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" />
     <light name="side_light" pos="5 5 5" dir="-1 -1 -1" diffuse="0.4 0.4 0.4" />
-  <!-- wrist camera is defined inside panda.xml (hand body) -->
   </worldbody>
 </mujoco>
