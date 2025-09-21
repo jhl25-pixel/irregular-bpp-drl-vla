@@ -6,6 +6,8 @@ import datetime
 import os
 import sys
 import shutil
+import matplotlib.pyplot as plt
+import torch
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 import utils
@@ -18,24 +20,31 @@ import torch
 
 class MujocoPackingEnv:
 
-    def __init__(self, xml_path, initial_packing_object):
+    def __init__(self, xml_path, initial_packing_object, width=640, height=480):
         
         self.initial_xml_path = xml_path
         self.current_xml_path = xml_path
         self.model = mj.MjModel.from_xml_path(xml_path)
         self.data = mj.MjData(self.model)
-        self.renderer = mj.Renderer()
-        self.renderer.set_model(self.model)
+        self.renderer = mj.Renderer(self.model, width=width, height=height)
         self.state_agent = N_OBJ_State(self.current_xml_path)
 
         self.initial_packing_object = initial_packing_object
         self.curr_packing_object = []
         self.current_item_idx = 0
-        # renderer will be created on demand (recreated when model changes)
-        self.renderer = None
         # camera names defined in conveyor.xml
         # front_cam: front view, side_cam: side view, topdown_cam: top-down, egocentric_cam: robot-eye, wrist_cam: wrist
         self.camera_names = ["front_cam", "side_cam", "topdown_cam", "egocentric_cam", "wrist_cam"]
+
+    def init(self):
+        result_path = os.path.join(param.result_path, str(param.res_idx))
+        param.res_idx += 1
+        if not os.path.exists(result_path):
+            os.makedirs(result_path)
+        param.result_path_now = result_path
+        destination = os.path.join(param.result_path_now, 'assets')
+        if not os.path.exists(destination):
+            shutil.copytree(param.robot_assets, destination)
 
     def add_object_to_scene(self, x, y, z, obj_path=None):
 
@@ -91,8 +100,7 @@ class MujocoPackingEnv:
 
         self.model = mj.MjModel.from_xml_path(os.path.join(param.result_path_now, temp_xml))
         self.data = mj.MjData(self.model)
-        # model changed -> drop renderer so it will be recreated lazily
-        self.renderer = None
+
 
         self.current_xml_path = os.path.join(param.result_path_now, temp_xml)
         return os.path.join(param.result_path_now, temp_xml)
@@ -122,9 +130,12 @@ class MujocoPackingEnv:
             width (int): Width of the output image.
             height (int): Height of the output image.
         '''
-        img = self.renderer.render(camera=camera_name, width=width, height=height)
-        return img
+        mj.mj_forward(self.model, self.data) # 更新数据, 注意需要手动更新时间 model.time 或者使用model.mj_step()
+        self.renderer.update_scene(self.data, camera_name) # 更新场景
 
+        img = self.renderer.render() # 返回一个numpy数组
+    
+        return img
 
     def step(self, action=None, n_substeps:int=10, render:bool=False):
         """
@@ -150,129 +161,21 @@ class MujocoPackingEnv:
             action_arr = np.array(action, dtype=np.float32).ravel()
 
         # ensure ctrl has correct length
-        try:
-            self.data.ctrl[:] = 0.0
-            n = min(self.model.nu, action_arr.size)
-            if n > 0:
-                self.data.ctrl[:n] = action_arr[:n]
-        except Exception:
-            # some models might not have actuators
-            pass
+        assert self.model.nu == action_arr.size, f"action size {action_arr.size} does not match model.nu {self.model.nu}"
+        n = self.model.nu
+        self.data.ctrl[:n] = action_arr[:n]
 
         # step simulation
         for _ in range(n_substeps):
-            # apply conveyor simple velocity to objects on belt/host/bridge
-            try:
-                conveyor.apply_conveyor_velocity_simple(self.model, self.data, param.conveyor_xml, conveyor_speed=param.conveyor_speed)
-            except Exception:
-                # don't fail if conveyor utilities aren't available
-                pass
 
+            conveyor.apply_conveyor_velocity_simple(self.model, self.data, param.conveyor_xml, conveyor_speed=param.conveyor_speed)
             mj.mj_step(self.model, self.data)
 
-        # collect object states from current simulation data
-        positions = {}
-        obj_states = []
-        for i in range(self.model.nbody):
-            body_name = self.model.body(i).name
-            if body_name and body_name.startswith("obj_"):
-                pos = self.data.body(i).xpos.copy()
-                quat = self.data.body(i).xquat.copy()
-                positions[body_name] = {'pos': pos, 'quat': quat}
-                obj_states.append(np.concatenate((pos, quat)).astype(np.float32))
+        obj_states = torch.tensor([], dtype=torch.float32)
 
-        # pad to fixed length (param.obj_num)
-        if len(obj_states) < param.obj_num:
-            for _ in range(param.obj_num - len(obj_states)):
-                obj_states.append(np.zeros(7, dtype=np.float32))
-
-        if len(obj_states) > 0:
-            obs = np.concatenate(obj_states, axis=0)
-        else:
-            obs = np.zeros(param.obj_num * 7, dtype=np.float32)
-
-        state = torch.FloatTensor(obs)
-
-        # simple reward: check whether the most recently added object is inside collection_box
-        reward = 0.0
-        last_idx = max(0, self.current_item_idx - 1)
-        last_name = f"obj_{last_idx}"
-        if last_name in positions:
-            # load collection_box position from current xml (fallback to origin)
-            try:
-                tree = ET.parse(self.current_xml_path)
-                root = tree.getroot()
-                # use utility to compute collection box world-aligned bounds
-                try:
-                    box_min, box_max = utils.return_collection_box_range_worldbody(self.current_xml_path)
-                except Exception:
-                    # fallback to hardcoded defaults if util fails
-                    box_min = np.array([-1.4, -1.4, -0.4])
-                    box_max = np.array([1.4, 1.4, 0.9])
-
-                p = positions[last_name]['pos']
-                try:
-                    if utils.is_on_box(p, box_min, box_max, tolerance=0.0):
-                        reward = 1.0
-                except Exception:
-                    # final fallback: simple axis-aligned check
-                    if (box_min[0] <= p[0] <= box_max[0] and
-                        box_min[1] <= p[1] <= box_max[1] and
-                        box_min[2] <= p[2] <= box_max[2]):
-                        reward = 1.0
-            except Exception:
-                reward = 0.0
-
-        # advance item counter if desired (user may want manual control); here we do not auto-increment
-        done = (self.current_item_idx >= len(self.initial_packing_object) - 1)
-        info = {'positions': positions}
-
-        # optional: render cameras and include images in info
-        if render:
-            images = {}
-            try:
-                if self.renderer is None:
-                    try:
-                        # preferred constructor
-                        self.renderer = mj.Renderer(self.model)
-                    except Exception:
-                        try:
-                            # fallback: create empty renderer and set model
-                            self.renderer = mj.Renderer()
-                            if hasattr(self.renderer, 'set_model'):
-                                self.renderer.set_model(self.model)
-                        except Exception:
-                            self.renderer = None
-
-                if self.renderer is not None:
-                    for cam in self.camera_names:
-                        try:
-                            # try update_scene with data first
-                            try:
-                                self.renderer.update_scene(self.data, camera=cam)
-                            except Exception:
-                                try:
-                                    self.renderer.update_scene(self.model, self.data, camera=cam)
-                                except Exception:
-                                    pass
-
-                            # try render
-                            try:
-                                img = self.renderer.render()
-                            except Exception:
-                                try:
-                                    img = self.renderer.render(camera=cam)
-                                except Exception:
-                                    img = None
-
-                            images[cam] = img
-                        except Exception:
-                            images[cam] = None
-            except Exception:
-                images = {}
-
-            info['images'] = images
-
+        for camera_name in self.camera_names:
+            obj_states.append(self.return_image(camera_name))
+        
         return state, float(reward), bool(done), info
 
 
@@ -295,4 +198,7 @@ def build_the_env():
 
 if __name__ == "__main__":
     env = build_the_env()
-    print(env.return_image('wrist_cam', 320, 240).shape)
+    img = env.return_image('front_cam')
+    plt.imshow(img)
+    plt.axis('off') 
+    plt.show()

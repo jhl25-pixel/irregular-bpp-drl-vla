@@ -22,6 +22,7 @@ class param:
     res_idx = 2
     result_path_now = None
     epoches = data_num - 1
+    cameras = ["front_cam", "side_cam", "topdown_cam", "wrist_cam"]
     def __init__(self, seed=42, data_path = "../dataset/objaversestl"):
 
         self.seed = seed
