@@ -9,6 +9,10 @@ import shutil
 import matplotlib.pyplot as plt
 import torch
 
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'vla', 'openpi', 'src'))
+from openpi.training import config as _config
+from openpi.policies import policy_config
+from openpi.shared import download
 
 import utils
 from param import param
