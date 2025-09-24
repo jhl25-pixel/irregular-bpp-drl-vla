@@ -73,9 +73,6 @@ if __name__ == "__main__":
     '''
     E:/Install_Location/anaconda3/envs/mujoco/python.exe g:/irregularBPP/env/viewer.py
     '''
-    import argparse
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, default=r"D:\lab\irregular-bpp-drl-vla\env\franka_emika_panda\conveyor_system.xml")
-    args = parser.parse_args()
+
     #view_robot(r"G:\irregularBPP\experiment\2\scene_1.xml")
-    view_robot(args.path)
+    view_robot(param.param.conveyor_system_xml)

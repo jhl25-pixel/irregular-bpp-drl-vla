@@ -9,9 +9,10 @@ class param:
     scale=0.003
     conveyor_speed=1.0
     absolute_irbpp_root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    robot_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "panda.xml")
+    robot_xml = "panda.xml"
     robot_assets = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "assets")
-    conveyor_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "conveyor.xml")
+    conveyor_xml = "conveyor.xml"
+    conveyor_system_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "conveyor_system.xml")
     data_path = os.path.join(absolute_irbpp_root_path, "dataset", "objaversestl")
     xml_path = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda")
     result_path = os.path.join(absolute_irbpp_root_path, "experiment")
