@@ -10,8 +10,9 @@ class param:
     conveyor_speed=1.0
     absolute_irbpp_root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     robot_xml = "panda.xml"
+    robot_xml_full_location = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "panda.xml")
     robot_assets = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "assets")
-    conveyor_xml = "conveyor.xml"
+    conveyor_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "conveyor.xml")
     conveyor_system_xml = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda", "conveyor_system.xml")
     data_path = os.path.join(absolute_irbpp_root_path, "dataset", "objaversestl")
     xml_path = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda")
@@ -24,6 +25,8 @@ class param:
     result_path_now = None
     epoches = data_num - 1
     cameras = ["front_cam", "side_cam", "topdown_cam", "wrist_cam"]
+    packing_object_every_N_steps = 100
+
     def __init__(self, seed=42, data_path = "../dataset/objaversestl"):
 
         self.seed = seed

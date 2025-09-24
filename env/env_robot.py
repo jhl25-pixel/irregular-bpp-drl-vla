@@ -4,6 +4,7 @@ import mujoco.viewer as viewer
 import numpy as np
 import datetime
 import os
+os.environ['MUJOCO_GL'] = 'osmesa'
 import sys
 import shutil
 import matplotlib.pyplot as plt
@@ -21,15 +22,43 @@ from simulator import simulator
 from state import N_OBJ_State
 import conveyor
 import torch
+import platform
 
+import model
+ROBOT_LIST=['pandas']
+ROBOT_INFO={
+    'pandas':{
+        'model_path': param.robot_xml_full_location,
+        'gripper_joint_names': ['panda_finger_joint1', 'panda_finger_joint2'],
+        'arm_joint_name': [
+            'joint1', 'joint2', 'joint3', 'joint4', 
+            'joint5', 'joint6', 'joint7'
+        ],
+    }
+}
+VLA_INFO={
+    'pi05_droid':{
+        'config_name': 'pi05_droid',
+        'checkpoint_path': 'gs://openpi-assets/checkpoints/pi05_droid'
+    }
+}
 class MujocoPackingEnv:
 
-    def __init__(self, xml_path, initial_packing_object, width=640, height=480):
+    def __init__(
+            self, xml_path, initial_packing_object, robot="pandas", vla="pi05_droid", width=640, height=480
+        ):
+        system = platform.system().lower()
+        if system == 'linux':
+            os.environ['MUJOCO_GL'] = 'osmesa'
+
         
         self.initial_xml_path = xml_path
         self.current_xml_path = xml_path
         self.model = mj.MjModel.from_xml_path(xml_path)
         self.data = mj.MjData(self.model)
+        if robot == "pandas":
+            self.robot = model.Panda(self.model, self.data)
+        self.p0 = model.Pi0(VLA_INFO[vla]['config_name'], VLA_INFO[vla]['checkpoint_path'])
         self.renderer = mj.Renderer(self.model, width=width, height=height)
         self.state_agent = N_OBJ_State(self.current_xml_path)
 
@@ -39,6 +68,7 @@ class MujocoPackingEnv:
         # camera names defined in conveyor.xml
         # front_cam: front view, side_cam: side view, topdown_cam: top-down, egocentric_cam: robot-eye, wrist_cam: wrist
         self.camera_names = ["front_cam", "side_cam", "topdown_cam", "egocentric_cam", "wrist_cam"]
+        self.step_count = 0
 
     def init(self):
         result_path = os.path.join(param.result_path, str(param.res_idx))
@@ -125,7 +155,7 @@ class MujocoPackingEnv:
                 break
         return self.current_xml_path
     
-    def return_image(self, camera_name='wrist_cam', width=640, height=480):
+    def return_image(self, camera_name='wrist_cam', width=1920, height=1440):
         '''
         Return an RGB image from the specified camera.
 
@@ -158,6 +188,9 @@ class MujocoPackingEnv:
             done (bool): True if we've processed all initial_packing_object
             info (dict): debug info (positions mapping)
         """
+        if self.current_item_idx < param.data_num and self.step_count % param.packing_object_every_N_steps == 0:
+            self.add_object_to_packing_region()
+        
         # prepare action vector and write to ctrl
         if action is None:
             action_arr = np.zeros(self.model.nu, dtype=np.float32)
@@ -165,9 +198,23 @@ class MujocoPackingEnv:
             action_arr = np.array(action, dtype=np.float32).ravel()
 
         # ensure ctrl has correct length
-        assert self.model.nu == action_arr.size, f"action size {action_arr.size} does not match model.nu {self.model.nu}"
         n = self.model.nu
+        obj_states = {}
+        for camera_name in self.camera_names:
+            obj_states[camera_name].append(self.return_image(camera_name))
+        
+        obj_states["prompt"] = "pick up the object and place it in the box"
+        obj_states["observation/exterior_image_1_left"] = obj_states["front_cam"]
+        obj_states["observation/joint_position"] = self.robot.get_arm_joint_positions()
+        obj_states["observation/gripper_position"] = self.robot.get_gripper_position()
+        action = self.p0.generate_action(obj_states)
+        action_arr = np.array(action, dtype=np.float32).ravel()
+        action_arr = np.clip(action_arr, -3.0, 3.0)
+
         self.data.ctrl[:n] = action_arr[:n]
+
+
+        
 
         # step simulation
         for _ in range(n_substeps):
@@ -175,13 +222,8 @@ class MujocoPackingEnv:
             conveyor.apply_conveyor_velocity_simple(self.model, self.data, param.conveyor_xml, conveyor_speed=param.conveyor_speed)
             mj.mj_step(self.model, self.data)
 
-        obj_states = torch.tensor([], dtype=torch.float32)
-
-        for camera_name in self.camera_names:
-            obj_states.append(self.return_image(camera_name))
-        
-        
-
+        self.step_count += 1
+    
 
 def build_the_env():
     xml_file = generate_initial_xml(
@@ -190,19 +232,41 @@ def build_the_env():
         conveyor_length=2.5,
         conveyor_width=0.6,
         conveyor_position=(-10, 10, 0.5),
-        object_num=25
+        object_num=25,
     )
 
     data_simulator = simulator(param.data_path, data_type="stl")
     simulated_object_list = data_simulator._roll_the_dice(param.data_num)
 
-    env = MujocoPackingEnv(xml_file, simulated_object_list)
+    env = MujocoPackingEnv(xml_file, simulated_object_list, width=640, height=480, robot="pandas", vla="pi05_droid")
     env.init()
     return env
 
-if __name__ == "__main__":
+def test():
     env = build_the_env()
     img = env.return_image('wrist_cam')
+    img2 = env.return_image('topdown_cam')
+    img3 = env.return_image('front_cam')
+    img4 = env.return_image('side_cam')
+    print(img.shape, img2.shape, img3.shape, img4.shape)
     plt.imshow(img)
-    plt.axis('off') 
+    plt.savefig("test.png")
     plt.show()
+    print("Image saved as test.png")
+    plt.imshow(img2)
+    plt.savefig("test2.png") 
+    plt.show()
+    print("Image saved as test2.png")
+    plt.imshow(img3)
+    plt.savefig("test3.png") 
+    plt.show()
+    print("Image saved as test3.png")
+    plt.imshow(img4)
+    plt.savefig("test4.png") 
+    plt.show()
+    print("Image saved as test4.png")
+
+if __name__ == "__main__":
+    
+    env = build_the_env()
+    env.step()
