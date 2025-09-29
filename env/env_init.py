@@ -103,7 +103,7 @@ class MuJoCoEnvironmentInitializer:
         include.set("file", param.robot_xml)
 
         include2 = ET.SubElement(self.root, "include")
-        include2.set("file", param.conveyor_xml)
+        include2.set("file", os.path.basename(param.conveyor_xml))
 
     def _add_assets(self):
         """添加材质和资源"""

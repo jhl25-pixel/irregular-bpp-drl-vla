@@ -26,7 +26,7 @@
 
 
         
-        <geom name="warehouse_floor" type="box" size="3.8 0.6 0.15" pos="-5.3 -0.5 0.05" material="warehouse_mat" condim="6" friction="0 0.1 0.01" />
+        <geom name="warehouse_floor" type="box" size="3.8 0.6 0.15" pos="-5.3 -0.5 0.05" material="warehouse_mat" condim="6" friction="0 1 1" />
         
         
         <geom name="warehouse_back" type="box" size="0.05 0.6 0.4" pos="-9.1 -0.5 0.4" material="warehouse_mat" condim="6" friction="1.0 0.1 0.01" />
@@ -38,7 +38,7 @@
         <geom name="warehouse_right" type="box" size="3.8 0.05 0.4" pos="-5.3 0.09999999999999998 0.4" material="warehouse_mat" condim="6" friction="1.0 0.1 0.01" />
         
         
-        <geom name="warehouse_roof" type="box" size="3.8 0.6 0.05" pos="-5.3 -0.5 0.75" material="warehouse_mat" condim="6" friction="1.0 0.1 0.01" />
+        <geom name="warehouse_roof" type="box" size="3.8 0.6 0.05" pos="-5.3 -0.5 0.75" material="warehouse_mat" condim="6" friction="0 1 1" />
         
 
         
@@ -47,14 +47,14 @@
         <geom name="frame_base" type="box" size="1.1 0.3 0.05" pos="0 -0.5 0.04" material="support_mat" condim="6" friction="0 0.1 0.01" />
         
         
-        <geom name="belt_surface" type="box" size="1 0.25 0.08" pos="0 -0.5 0.12" material="belt_material" condim="6" friction="0 0.1 0.01" />
+        <geom name="belt_surface" type="box" size="1 0.25 0.08" pos="0 -0.5 0.12" material="belt_material" condim="6" friction="0 1 1" />
         
         
         <geom name="left_rail" type="box" size="1 0.02 0.05" pos="0 -0.77 0.13" material="support_mat" condim="6" friction="0 0.1 0.01" />
         <geom name="right_rail" type="box" size="1 0.02 0.05" pos="0 -0.73 0.13" material="support_mat" condim="6" friction="0 0.1 0.01" />
         
         
-        <geom name="connection_bridge" type="box" size="0.25 0.25 0.02" pos="-1.25 -0.5 0.18" material="belt_material" condim="6" friction="0 0.1 0.01" />
+        <geom name="connection_bridge" type="box" size="0.25 0.25 0.02" pos="-1.25 -0.5 0.18" material="belt_material" condim="6" friction="0 1 1" />
         
         
         

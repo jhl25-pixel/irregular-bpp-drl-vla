@@ -48,3 +48,4 @@ def test2():
     print("Example input prepared successfully.")
     action_chunk = policy.infer(example)["actions"]
 
+print(1+1)

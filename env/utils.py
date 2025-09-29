@@ -272,8 +272,8 @@ def return_image(camera_name='wrist_cam', width=640, height=480):
     '''
     伪代码，视你的 mujoco 版本而定
     '''
-    import renderer
-    img = renderer.render(camera=camera_name, width=640, height=480)
+
+    img = mj.renderer.render(camera=camera_name, width=640, height=480)
     return img
 
 if __name__ == "__main__":

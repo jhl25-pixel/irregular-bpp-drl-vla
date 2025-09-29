@@ -12,12 +12,14 @@ class Robot(ABC):
         self.data = data
 
     @abstractmethod
-    def get_arm_joint_positions(self):
+    def get_arm_joint_position(self):
         pass
 
     @abstractmethod
     def get_gripper_position(self):
         pass
+
+    
 
 class Panda(Robot):
 
@@ -28,7 +30,7 @@ class Panda(Robot):
             'joint5', 'joint6', 'joint7'
         ]
         self.gripper_joint_names = [
-            'panda_finger_joint1', 'panda_finger_joint2']
+            'finger_joint1', 'finger_joint2']
 
         self.joint_id = []
         for arm_name in self.arm_joint_name:
@@ -36,12 +38,35 @@ class Panda(Robot):
         self.gripper_id = []
         for gripper_name in self.gripper_joint_names:
             self.gripper_id.append(mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_JOINT, gripper_name))
+
+        self._reinitialize()
+
+    def get_arm_joint_position(self, data):
+        return [data.qpos[id] for id in self.joint_id]
     
-    def get_arm_joint_positions(self):
-        return [self.data.qpos[id] for id in self.joint_id]
+    def get_gripper_position(self, data):
+        return [data.qpos[id] for id in self.gripper_id]
     
-    def get_gripper_position(self):
-        return [self.data.qpos[id] for id in self.gripper_id]
+    def _reinitialize(self):
+        """重新初始化关节ID"""
+        # 获取机械臂关节ID
+        self.joint_id = []
+        for arm_name in self.arm_joint_name:
+            joint_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_JOINT, arm_name)
+            if joint_id == -1:
+                print(f"Warning: 机械臂关节 {arm_name} 在模型中未找到")
+            self.joint_id.append(joint_id)
+        
+        # 获取夹爪关节ID
+        self.gripper_id = []
+        for gripper_name in self.gripper_joint_names:
+            joint_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_JOINT, gripper_name)
+            if joint_id == -1:
+                print(f"Warning: 夹爪关节 {gripper_name} 在模型中未找到")
+            self.gripper_id.append(joint_id)
+        
+        print(f"机械臂关节ID: {self.joint_id}")
+        print(f"夹爪关节ID: {self.gripper_id}")
 
 class Pi0:
 

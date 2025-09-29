@@ -17,15 +17,16 @@ class param:
     data_path = os.path.join(absolute_irbpp_root_path, "dataset", "objaversestl")
     xml_path = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda")
     result_path = os.path.join(absolute_irbpp_root_path, "experiment")
-    data_num=100
+    data_num=1500
     required_stable_steps=50
     stable_threshold_v = 1e-4
     time = None
-    res_idx = 2
+    res_idx = 3
     result_path_now = None
     epoches = data_num - 1
     cameras = ["front_cam", "side_cam", "topdown_cam", "wrist_cam"]
     packing_object_every_N_steps = 100
+    img_save_path = os.path.join(absolute_irbpp_root_path, "img")
 
     def __init__(self, seed=42, data_path = "../dataset/objaversestl"):
 
