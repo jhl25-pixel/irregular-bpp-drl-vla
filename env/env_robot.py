@@ -43,6 +43,9 @@ VLA_INFO={
         'checkpoint_path': 'gs://openpi-assets/checkpoints/pi05_droid'
     }
 }
+
+param.res_idx = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
 class MujocoPackingEnv:
 
     def __init__(
@@ -79,13 +82,15 @@ class MujocoPackingEnv:
 
     def init(self):
         result_path = os.path.join(param.result_path, str(param.res_idx))
-        param.res_idx += 1
         if not os.path.exists(result_path):
             os.makedirs(result_path)
         param.result_path_now = result_path
-        destination = os.path.join(param.result_path_now, 'assets')
-        if not os.path.exists(destination):
-            shutil.copytree(param.robot_assets, destination)
+        assets_destination = os.path.join(param.result_path_now, 'assets')
+        if not os.path.exists(assets_destination):
+            shutil.copytree(param.robot_assets, assets_destination)
+        
+        shutil.copy(param.conveyor_xml, param.result_path_now)
+        shutil.copy(param.robot_xml_full_location, param.result_path_now)
 
     def add_object_to_scene(self, x, y, z, obj_path=None):
         if self.current_item_idx >= param.data_num:
@@ -137,6 +142,25 @@ class MujocoPackingEnv:
         
         geom_elem.set('rgba', '0.8 0.6 0.2 1')
         geom_elem.set('friction', '0.7 0.01 0.01')
+
+        for body in worldbody.findall("body"):
+            name = body.get("name")
+            if name and name.startswith("obj_"):
+                body_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, name)
+                if body_id >= 0:
+                    jntadr = self.model.body_jntadr[body_id]
+                    if jntadr >= 0:
+                        qpos_adr = self.model.jnt_qposadr[jntadr]
+                        # 取当前qpos中的位置和四元数
+                        x = self.data.qpos[qpos_adr + 0]
+                        y = self.data.qpos[qpos_adr + 1]
+                        z = self.data.qpos[qpos_adr + 2]
+                        qw = self.data.qpos[qpos_adr + 3]
+                        qx = self.data.qpos[qpos_adr + 4]
+                        qy = self.data.qpos[qpos_adr + 5]
+                        qz = self.data.qpos[qpos_adr + 6]
+                        body.set("pos", f"{x} {y} {z}")
+                        body.set("quat", f"{qw} {qx} {qy} {qz}")
 
         xml_nextstage = os.path.join(param.result_path_now, f"scene_{self.current_item_idx}.xml")
         tree.write(xml_nextstage)
@@ -375,5 +399,5 @@ if __name__ == "__main__":
     
     for i in range(len(env.images.return_img())):
         plt.imsave(os.path.join(param.img_save_path, f"{i:03d}.png"), env.images.return_img()[i])
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    #timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     save_image_to_video(env.images.return_img(), output_path=f"/home/hljin/irregular-bpp-drl-vla/video/simulation_{timestamp}.mp4")
