@@ -101,7 +101,9 @@ class MujocoPackingEnv:
         old_qvel = self.data.qvel.copy() 
         old_ctrl = self.data.ctrl.copy()
         
-        print(f"添加物体到位置: ({x}, {y}, {z})")
+        # 🔥 保存目标位置，避免被覆盖
+        target_x, target_y, target_z = x, y, z
+        print(f"添加物体到位置: ({target_x}, {target_y}, {target_z})")
 
         tree = ET.parse(self.current_xml_path)
         root = tree.getroot()
@@ -120,7 +122,7 @@ class MujocoPackingEnv:
 
         body_elem = ET.SubElement(worldbody, "body")
         body_elem.set("name", mesh_name)
-        body_elem.set("pos", f"{x} {y} {z}")  # XML中的位置
+        body_elem.set("pos", f"{target_x} {target_y} {target_z}")  # 使用 target_x/y/z
         body_elem.set("quat", "1 0 0 0")
 
         # 添加自由关节
@@ -143,6 +145,7 @@ class MujocoPackingEnv:
         geom_elem.set('rgba', '0.8 0.6 0.2 1')
         geom_elem.set('friction', '0.7 0.01 0.01')
 
+        # 更新旧物体在XML中的位置（使用不同的变量名）
         for body in worldbody.findall("body"):
             name = body.get("name")
             if name and name.startswith("obj_"):
@@ -151,15 +154,15 @@ class MujocoPackingEnv:
                     jntadr = self.model.body_jntadr[body_id]
                     if jntadr >= 0:
                         qpos_adr = self.model.jnt_qposadr[jntadr]
-                        # 取当前qpos中的位置和四元数
-                        x = self.data.qpos[qpos_adr + 0]
-                        y = self.data.qpos[qpos_adr + 1]
-                        z = self.data.qpos[qpos_adr + 2]
+                        # 使用不同的变量名
+                        old_x = self.data.qpos[qpos_adr + 0]
+                        old_y = self.data.qpos[qpos_adr + 1]
+                        old_z = self.data.qpos[qpos_adr + 2]
                         qw = self.data.qpos[qpos_adr + 3]
                         qx = self.data.qpos[qpos_adr + 4]
                         qy = self.data.qpos[qpos_adr + 5]
                         qz = self.data.qpos[qpos_adr + 6]
-                        body.set("pos", f"{x} {y} {z}")
+                        body.set("pos", f"{old_x} {old_y} {old_z}")
                         body.set("quat", f"{qw} {qx} {qy} {qz}")
 
         xml_nextstage = os.path.join(param.result_path_now, f"scene_{self.current_item_idx}.xml")
@@ -179,30 +182,28 @@ class MujocoPackingEnv:
         self.data.qvel[:min_qvel_len] = old_qvel[:min_qvel_len] 
         self.data.ctrl[:min_ctrl_len] = old_ctrl[:min_ctrl_len]
         
-        # 🔥 关键修复：手动设置新物体的正确位置
+        # 手动设置新物体的正确位置
         new_body_name = f"obj_{self.current_item_idx}"
         new_body_id = mj.mj_name2id(self.model, mj.mjtObj.mjOBJ_BODY, new_body_name)
         
         if new_body_id >= 0:
             print(f"找到新物体 {new_body_name}，body_id = {new_body_id}")
             
-            # 找到新物体的关节
             body_jntadr = self.model.body_jntadr[new_body_id]
             if body_jntadr >= 0:
-                # 获取关节的qpos地址
                 qpos_adr = self.model.jnt_qposadr[body_jntadr]
                 print(f"新物体qpos地址: {qpos_adr}")
                 
-                # 手动设置新物体的位置和姿态
-                self.data.qpos[qpos_adr + 0] = x      # X位置
-                self.data.qpos[qpos_adr + 1] = y      # Y位置  
-                self.data.qpos[qpos_adr + 2] = z      # Z位置
-                self.data.qpos[qpos_adr + 3] = 1.0    # 四元数w
-                self.data.qpos[qpos_adr + 4] = 0.0    # 四元数x
-                self.data.qpos[qpos_adr + 5] = 0.0    # 四元数y
-                self.data.qpos[qpos_adr + 6] = 0.0    # 四元数z
+                # 🔥 使用 target_x/y/z 而不是 x/y/z
+                self.data.qpos[qpos_adr + 0] = target_x
+                self.data.qpos[qpos_adr + 1] = target_y
+                self.data.qpos[qpos_adr + 2] = target_z
+                self.data.qpos[qpos_adr + 3] = 1.0
+                self.data.qpos[qpos_adr + 4] = 0.0
+                self.data.qpos[qpos_adr + 5] = 0.0
+                self.data.qpos[qpos_adr + 6] = 0.0
                 
-                print(f"设置新物体位置为: ({x}, {y}, {z})")
+                print(f"设置新物体位置为: ({target_x}, {target_y}, {target_z})")
             else:
                 print(f"警告：物体 {new_body_name} 没有找到关节")
         else:
@@ -214,7 +215,6 @@ class MujocoPackingEnv:
             self.robot.data = self.data
         
         self.renderer = mj.Renderer(self.model, width=self.width, height=self.height)
-        # 更新衍生量 - 这会根据qpos计算正确的xpos
         mj.mj_forward(self.model, self.data)
         
         # 验证物体位置

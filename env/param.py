@@ -17,7 +17,7 @@ class param:
     data_path = os.path.join(absolute_irbpp_root_path, "dataset", "objaversestl")
     xml_path = os.path.join(absolute_irbpp_root_path, "env", "franka_emika_panda")
     result_path = os.path.join(absolute_irbpp_root_path, "experiment")
-    data_num=1500
+    data_num=400
     required_stable_steps=50
     stable_threshold_v = 1e-4
     time = None
