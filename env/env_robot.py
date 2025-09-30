@@ -348,7 +348,7 @@ class MujocoPackingEnv:
         self.step_count += 1
     
 
-def build_the_env():
+def build_the_env(random_selection=True):
     xml_file = generate_initial_xml(
         box_scale=0.2, 
         box_position=(6, 2, 0.1),
@@ -359,7 +359,7 @@ def build_the_env():
     )
 
     data_simulator = simulator(param.data_path, data_type="stl")
-    simulated_object_list = data_simulator._roll_the_dice(param.data_num)
+    simulated_object_list = data_simulator._roll_the_dice(param.data_num, random_selection=random_selection)
     print(xml_file)
     env = MujocoPackingEnv(xml_file, simulated_object_list, width=640, height=480, robot="pandas", vla="pi05_droid")
     env.init()
@@ -391,7 +391,7 @@ def test():
 
 if __name__ == "__main__":
     
-    env = build_the_env()
+    env = build_the_env(random_selection=False)
     num_step = 0
 
     for i in range(param.epoches):

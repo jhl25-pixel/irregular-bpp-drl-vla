@@ -35,10 +35,15 @@ class simulator:
             valid_data_path_list.append(item)
         return valid_data_path_list
 
-    def _roll_the_dice(self, roll_num: int = 50):
+    def _roll_the_dice(self, roll_num: int = 50, random_selection = True):
         
         source_object_list = self._load_the_data_list(self.data_type)
-        simulated_object_list = random.choices(source_object_list, k = roll_num)
+        if random_selection:
+            simulated_object_list = random.choices(source_object_list, k=roll_num)
+        else:
+            if roll_num > len(source_object_list):
+                roll_num = len(source_object_list)
+            simulated_object_list = source_object_list[:roll_num]
         
         return simulated_object_list
     
