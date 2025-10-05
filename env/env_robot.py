@@ -149,7 +149,7 @@ class MujocoPackingEnv:
         geom_elem.set('mesh', mesh_name)
         
         geom_elem.set('rgba', '0.8 0.6 0.2 1')
-        geom_elem.set('friction', '0.7 0.01 0.01')
+        geom_elem.set('friction', '0 1 1')
 
         # 更新旧物体在XML中的位置（使用不同的变量名）
         for body in worldbody.findall("body"):

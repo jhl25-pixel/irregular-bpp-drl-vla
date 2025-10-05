@@ -55,7 +55,7 @@ class OBJECT_SCALER:
         max_dim = max(length, height, width)
         if max_dim == 0:
             return 0
-        return min(50.0 / max_dim, 1)
+        return min(1.0 / max_dim , 0.05)
     @staticmethod
     def compute_scale_factor(file_path):
         length, width, height = OBJECT_SCALER.eval_object(file_path)
