@@ -18,6 +18,50 @@ def model_scale(xml_path, write_path, scale=2):
     
     tree.write(write_path)
 
+class OBJECT_SCALER:
+    @staticmethod
+    def eval_object(file_path):
+        from stl import mesh
+        import numpy as np
+        print("="*70)
+        print(f"当前正在处理：{file_path} 文件")
+        # 读取STL文件
+        try:
+            your_mesh = mesh.Mesh.from_file(file_path)
+
+            # 获取所有顶点坐标
+            vertices = your_mesh.vectors.reshape(-1, 3)
+
+            # 找到每个轴的最小值和最大值
+            min_coords = np.min(vertices, axis=0)  # [x_min, y_min, z_min]
+            max_coords = np.max(vertices, axis=0)  # [x_max, y_max, z_max]
+
+            # 计算长宽高
+            length = max_coords[0] - min_coords[0]  # X方向
+            width = max_coords[1] - min_coords[1]   # Y方向
+            height = max_coords[2] - min_coords[2]  # Z方向
+
+            print(f"长度(X): {length}")
+            print(f"宽度(Y): {width}")
+            print(f"高度(Z): {height}")
+            print(f"包围盒尺寸: {length} × {width} × {height}")
+            return length, width, height
+        except Exception as e:
+            print(f"处理文件失败：{file_path}")
+            return 0, 0, 0
+        
+    @staticmethod
+    def eval_scaling(length, height, width):
+        max_dim = max(length, height, width)
+        if max_dim == 0:
+            return 0
+        return min(50.0 / max_dim, 1)
+    @staticmethod
+    def compute_scale_factor(file_path):
+        length, width, height = OBJECT_SCALER.eval_object(file_path)
+        factor = OBJECT_SCALER.eval_scaling(length, width, height)
+        print(f"伸缩比例：{factor}")
+        return factor
 
 
 def is_binary_stl(filename):

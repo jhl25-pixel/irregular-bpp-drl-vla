@@ -44,6 +44,8 @@ VLA_INFO={
     }
 }
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '4'
+
 param.res_idx = timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
 class MujocoPackingEnv:
@@ -115,8 +117,12 @@ class MujocoPackingEnv:
         mesh_elem.set('name', mesh_name)
         mesh_elem.set('file', obj_path)
 
-        scale = param.scale
-        mesh_elem.set('scale', f"{scale} {scale} {scale}")
+        from utils import OBJECT_SCALER
+        factor = OBJECT_SCALER.compute_scale_factor(obj_path)
+        print("="*70)
+        print(f"当前正在处理：{obj_path}")
+        print(f"缩放因子：{factor}")
+        mesh_elem.set('scale', f"{factor} {factor} {factor}")
 
         worldbody = root.find('worldbody')
 
